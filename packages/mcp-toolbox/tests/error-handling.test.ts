@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { createTestDir, cleanupTestDir } from "../helpers/fs.js";
-import { runCli } from "../helpers/cli.js";
-import { createTestConfig } from "../helpers/config.js";
+import { createTestDir, cleanupTestDir } from "./helpers/fs";
+import { runCli } from "./helpers/cli";
+import { createTestConfig } from "./helpers/config";
 import path from "node:path";
 
 describe("error handling and recovery", () => {

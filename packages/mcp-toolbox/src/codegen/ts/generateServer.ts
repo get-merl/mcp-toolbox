@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { toCamelCase, toPascalCase } from "./names.js";
-import { jsonSchemaToTsInterface } from "./jsonSchemaToTs.js";
-import type { IntrospectedServer } from "../../introspect/types.js";
+import { toCamelCase, toPascalCase } from "./names";
+import { jsonSchemaToTsInterface } from "./jsonSchemaToTs";
+import type { IntrospectedServer } from "../../introspect/types";
 
 export async function generateServerTs(args: {
   outDir: string;
@@ -58,7 +58,7 @@ export async function generateServerTs(args: {
     ].join("\n");
 
     await fs.writeFile(filePath, ts, "utf-8");
-    exports.push(`export * from "./tools/${fnName}.js";`);
+    exports.push(`export * from "./tools/${fnName}";`);
   }
 
   const indexTs = [

@@ -1,4 +1,4 @@
-import type { DiffSummary } from "./types.js";
+import type { DiffSummary } from "./types";
 
 export function renderDiffReport(args: {
   registryId: string;

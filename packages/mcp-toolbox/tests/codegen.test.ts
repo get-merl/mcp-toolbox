@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
-import { generateServerTs } from "../../src/codegen/ts/generateServer.js";
-import type { IntrospectedServer } from "../../src/introspect/types.js";
-import { createTestDir, cleanupTestDir, fileExists } from "../helpers/fs.js";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { generateServerTs } from "@/codegen/ts/generateServer";
+import type { IntrospectedServer } from "@/introspect/types";
+import { createTestDir, cleanupTestDir, fileExists } from "./helpers/fs";
 import path from "node:path";
 import fs from "node:fs/promises";
 
@@ -46,7 +46,13 @@ describe("code generation", () => {
       snapshot,
     });
 
-    const toolFile = path.join(testDir, "servers", "test-server-mock", "tools", "testTool.ts");
+    const toolFile = path.join(
+      testDir,
+      "servers",
+      "test-server-mock",
+      "tools",
+      "testTool.ts"
+    );
     expect(await fileExists(toolFile)).toBe(true);
 
     const content = await fs.readFile(toolFile, "utf-8");
@@ -133,7 +139,12 @@ describe("code generation", () => {
     });
 
     // Should handle collisions by appending numbers
-    const toolsDir = path.join(testDir, "servers", "test-server-collision", "tools");
+    const toolsDir = path.join(
+      testDir,
+      "servers",
+      "test-server-collision",
+      "tools"
+    );
     const files = await fs.readdir(toolsDir);
     // Should have unique file names
     expect(new Set(files).size).toBe(files.length);
@@ -198,7 +209,12 @@ describe("code generation", () => {
       snapshot,
     });
 
-    const indexFile = path.join(testDir, "servers", "test-server-barrel", "index.ts");
+    const indexFile = path.join(
+      testDir,
+      "servers",
+      "test-server-barrel",
+      "index.ts"
+    );
     expect(await fileExists(indexFile)).toBe(true);
 
     const content = await fs.readFile(indexFile, "utf-8");

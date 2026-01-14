@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
-import type { ExecResult } from "./types.js";
+import type { ExecResult } from "./types";
 
 export async function runCli(
   args: string[],

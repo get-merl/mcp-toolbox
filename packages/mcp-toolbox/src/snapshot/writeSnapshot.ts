@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { IntrospectedServer } from "../introspect/types.js";
-import { fingerprint } from "./fingerprint.js";
+import type { IntrospectedServer } from "../introspect/types";
+import { fingerprint } from "./fingerprint";
 
 export type SnapshotMeta = {
   retrievedAt: string;

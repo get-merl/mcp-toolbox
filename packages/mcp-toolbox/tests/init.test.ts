@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { createTestDir, cleanupTestDir, fileExists, readFileIfExists } from "../helpers/fs.js";
-import { runCli } from "../helpers/cli.js";
+import { createTestDir, cleanupTestDir, fileExists, readFileIfExists } from "./helpers/fs";
+import { runCli } from "./helpers/cli";
 import path from "node:path";
 
 describe("init command", () => {

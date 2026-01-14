@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { createTestDir, cleanupTestDir, fileExists, listFiles } from "../helpers/fs.js";
-import { runCli } from "../helpers/cli.js";
-import { createTestConfig, addServerToConfig } from "../helpers/config.js";
+import { createTestDir, cleanupTestDir, fileExists, listFiles } from "./helpers/fs";
+import { runCli } from "./helpers/cli";
+import { createTestConfig, addServerToConfig } from "./helpers/config";
 import path from "node:path";
 import fs from "node:fs/promises";
 

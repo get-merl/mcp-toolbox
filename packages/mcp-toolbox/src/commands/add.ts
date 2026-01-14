@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { isCancel, select, spinner, text } from "@clack/prompts";
 import { defaultConfigPath, loadToolboxConfig, fileExists, RegistryClient } from "mcp-toolbox-runtime";
-import { writeToolboxConfigTs } from "../lib/writeConfig.js";
+import { writeToolboxConfigTs } from "../lib/writeConfig";
 
 export function addCommand() {
   const cmd = new Command("add")

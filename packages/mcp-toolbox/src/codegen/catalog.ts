@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { IntrospectedServer } from "../introspect/types.js";
+import type { IntrospectedServer } from "../introspect/types";
 
 export type Catalog = {
   generatedAt: string;

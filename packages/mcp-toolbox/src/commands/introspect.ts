@@ -1,9 +1,9 @@
 import { Command } from "commander";
 import { spinner } from "@clack/prompts";
 import { defaultConfigPath, defaultOutDir, loadToolboxConfig } from "mcp-toolbox-runtime";
-import { slugifyServerName } from "../lib/slug.js";
-import { introspectServer } from "../introspect/introspectServer.js";
-import { writeLatestSnapshot } from "../snapshot/writeSnapshot.js";
+import { slugifyServerName } from "../lib/slug";
+import { introspectServer } from "../introspect/introspectServer";
+import { writeLatestSnapshot } from "../snapshot/writeSnapshot";
 
 export function introspectCommand() {
   const cmd = new Command("introspect")

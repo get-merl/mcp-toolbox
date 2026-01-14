@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { createTestDir, cleanupTestDir, fileExists } from "../helpers/fs.js";
-import { runCli } from "../helpers/cli.js";
+import { createTestDir, cleanupTestDir, fileExists } from "./helpers/fs";
+import { runCli } from "./helpers/cli";
 import path from "node:path";
 
 describe("end-to-end happy path", () => {

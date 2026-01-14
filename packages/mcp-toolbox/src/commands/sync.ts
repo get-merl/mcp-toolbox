@@ -5,19 +5,19 @@ import { Command } from "commander";
 import { confirm, isCancel, spinner } from "@clack/prompts";
 
 import { defaultConfigPath, loadToolboxConfig, fileExists } from "mcp-toolbox-runtime";
-import { slugifyServerName } from "../lib/slug.js";
+import { slugifyServerName } from "../lib/slug";
 
-import { introspectServer } from "../introspect/introspectServer.js";
-import type { SnapshotMeta } from "../snapshot/writeSnapshot.js";
-import { writeLatestSnapshot } from "../snapshot/writeSnapshot.js";
-import { fingerprint } from "../snapshot/fingerprint.js";
+import { introspectServer } from "../introspect/introspectServer";
+import type { SnapshotMeta } from "../snapshot/writeSnapshot";
+import { writeLatestSnapshot } from "../snapshot/writeSnapshot";
+import { fingerprint } from "../snapshot/fingerprint";
 
-import { diffSnapshots } from "../diff/diffSnapshots.js";
-import { renderDiffReport } from "../diff/report.js";
+import { diffSnapshots } from "../diff/diffSnapshots";
+import { renderDiffReport } from "../diff/report";
 
-import { generateServerTs } from "../codegen/ts/generateServer.js";
-import { writeCatalog } from "../codegen/catalog.js";
-import { writeToolboxReadme } from "../codegen/readme.js";
+import { generateServerTs } from "../codegen/ts/generateServer";
+import { writeCatalog } from "../codegen/catalog";
+import { writeToolboxReadme } from "../codegen/readme";
 
 export function syncCommand() {
   const cmd = new Command("sync")

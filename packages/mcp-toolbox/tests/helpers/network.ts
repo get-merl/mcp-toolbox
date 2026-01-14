@@ -25,7 +25,7 @@ export class MockRegistryServer {
     limit?: number;
     cursor?: string;
   }): RegistryServerListResponse {
-    let servers = Array.from(this.listResponse.servers);
+    let servers = Array.from(this.listResponse.servers ?? []);
 
     if (params.search) {
       const searchLower = params.search.toLowerCase();
@@ -84,6 +84,7 @@ export function createMockServerResponse(
   } = {}
 ): RegistryServerResponse {
   return {
+    _meta: {},
     server: {
       name,
       version: options.version ?? "1.0.0",

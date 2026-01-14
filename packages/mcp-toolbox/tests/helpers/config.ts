@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { ToolboxConfig } from "mcp-toolbox-runtime";
-import { writeFileAtomic } from "./fs.js";
+import { writeFileAtomic } from "./fs";
 
 export async function createTestConfig(
   configPath: string,
@@ -37,7 +37,7 @@ export async function readConfig(configPath: string): Promise<ToolboxConfig> {
   const content = await fs.readFile(configPath, "utf-8");
   // Simple extraction - in real scenario would use proper TS parser
   const match = content.match(/const config[^=]*=\s*({[\s\S]*?});/);
-  if (!match) {
+  if (!match || !match[1]) {
     throw new Error("Could not parse config");
   }
   return JSON.parse(match[1]) as ToolboxConfig;

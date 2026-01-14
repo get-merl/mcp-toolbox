@@ -4,7 +4,7 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import type { ToolboxServerConfig } from "mcp-toolbox-runtime";
 import { RegistryClient } from "mcp-toolbox-runtime";
-import type { IntrospectedServer, McpToolDefinition } from "./types.js";
+import type { IntrospectedServer, McpToolDefinition } from "./types";
 
 export async function introspectServer(args: {
   serverConfig: ToolboxServerConfig;

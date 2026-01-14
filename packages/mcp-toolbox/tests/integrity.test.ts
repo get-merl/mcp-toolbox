@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { createTestDir, cleanupTestDir, fileExists, readFileIfExists } from "../helpers/fs.js";
-import { createTestConfig } from "../helpers/config.js";
-import { runCli } from "../helpers/cli.js";
+import { createTestDir, cleanupTestDir, fileExists, readFileIfExists } from "./helpers/fs";
+import { createTestConfig } from "./helpers/config";
+import { runCli } from "./helpers/cli";
 import path from "node:path";
 import fs from "node:fs/promises";
 
@@ -67,7 +67,11 @@ describe("data integrity and atomicity", () => {
 
     const catalogPath = path.join(outDir, "catalog.json");
     if (await fileExists(catalogPath)) {
-      const catalog = JSON.parse(await readFileIfExists(catalogPath)!);
+      const catalogContent = await readFileIfExists(catalogPath);
+      if (!catalogContent) {
+        throw new Error("Catalog file exists but content is null");
+      }
+      const catalog = JSON.parse(catalogContent);
       expect(catalog).toHaveProperty("servers");
       expect(Array.isArray(catalog.servers)).toBe(true);
 

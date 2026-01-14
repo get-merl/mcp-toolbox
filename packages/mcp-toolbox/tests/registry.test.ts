@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { runCli } from "../helpers/cli.js";
-import { createTestDir, cleanupTestDir } from "../helpers/fs.js";
-import { createTestConfig } from "../helpers/config.js";
+import { runCli } from "./helpers/cli";
+import { createTestDir, cleanupTestDir } from "./helpers/fs";
+import { createTestConfig } from "./helpers/config";
 import path from "node:path";
 
 describe("registry commands", () => {

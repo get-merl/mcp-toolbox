@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { createTestDir, cleanupTestDir } from "../helpers/fs.js";
-import { createTestConfig } from "../helpers/config.js";
+import { createTestDir, cleanupTestDir } from "./helpers/fs";
+import { createTestConfig } from "./helpers/config";
 import path from "node:path";
 
 describe("runtime - generated wrapper execution", () => {

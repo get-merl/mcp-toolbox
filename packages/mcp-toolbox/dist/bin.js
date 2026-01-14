@@ -1,11 +1,4 @@
 #!/usr/bin/env node
-import {
-  RegistryClient,
-  defaultConfigPath,
-  defaultOutDir,
-  fileExists,
-  loadToolboxConfig
-} from "./chunk-3LIBGVFP.js";
 
 // src/cli.ts
 import { Command as Command7 } from "commander";
@@ -14,6 +7,7 @@ import { intro, outro as outro2 } from "@clack/prompts";
 // src/commands/init.ts
 import { Command } from "commander";
 import { confirm, isCancel, outro, text } from "@clack/prompts";
+import { defaultConfigPath, defaultOutDir, fileExists } from "mcp-toolbox-runtime";
 
 // src/lib/writeConfig.ts
 import fs from "fs/promises";
@@ -75,6 +69,7 @@ async function maybeWriteConfig(configPath, outDir) {
 // src/commands/registry.ts
 import { Command as Command2 } from "commander";
 import { spinner } from "@clack/prompts";
+import { RegistryClient } from "mcp-toolbox-runtime";
 function registryCommand() {
   const cmd = new Command2("registry").description("Query the MCP registry");
   cmd.command("search").argument("<query>", "Search term").option("--json", "Output machine-readable JSON", false).action(async (query, opts) => {
@@ -132,17 +127,18 @@ function registryCommand() {
 // src/commands/add.ts
 import { Command as Command3 } from "commander";
 import { isCancel as isCancel2, select, spinner as spinner2, text as text2 } from "@clack/prompts";
+import { defaultConfigPath as defaultConfigPath2, loadToolboxConfig, fileExists as fileExists2, RegistryClient as RegistryClient2 } from "mcp-toolbox-runtime";
 function addCommand() {
-  const cmd = new Command3("add").description("Add a registry server to mcp-toolbox.config.ts").argument("[registryId]", "Registry server ID").option("--config <path>", "Path to config file", defaultConfigPath()).option("--yes", "Run non-interactively", false).action(async (registryId, opts) => {
+  const cmd = new Command3("add").description("Add a registry server to mcp-toolbox.config.ts").argument("[registryId]", "Registry server ID").option("--config <path>", "Path to config file", defaultConfigPath2()).option("--yes", "Run non-interactively", false).action(async (registryId, opts) => {
     const configPath = opts.config;
     const nonInteractive = Boolean(opts.yes);
-    if (!await fileExists(configPath)) {
+    if (!await fileExists2(configPath)) {
       throw new Error(
         `Config file not found at ${configPath}. Run 'mcp-toolbox init' first.`
       );
     }
     const config = await loadToolboxConfig(configPath);
-    const client = new RegistryClient();
+    const client = new RegistryClient2();
     let chosenId = registryId;
     if (!chosenId && !nonInteractive) {
       const query = await text2({ message: "Search for a server (name substring):" });
@@ -179,8 +175,9 @@ function addCommand() {
 
 // src/commands/remove.ts
 import { Command as Command4 } from "commander";
+import { defaultConfigPath as defaultConfigPath3 } from "mcp-toolbox-runtime";
 function removeCommand() {
-  const cmd = new Command4("remove").description("Remove a registry server from mcp-toolbox.config.ts").argument("[registryId]", "Registry server ID").option("--config <path>", "Path to config file", defaultConfigPath()).option("--yes", "Run non-interactively", false).action(async (registryId, _opts) => {
+  const cmd = new Command4("remove").description("Remove a registry server from mcp-toolbox.config.ts").argument("[registryId]", "Registry server ID").option("--config <path>", "Path to config file", defaultConfigPath3()).option("--yes", "Run non-interactively", false).action(async (registryId, _opts) => {
     if (!registryId) {
       console.log(
         "remove requires a registryId for now (interactive mode not implemented yet)"
@@ -195,6 +192,7 @@ function removeCommand() {
 // src/commands/introspect.ts
 import { Command as Command5 } from "commander";
 import { spinner as spinner3 } from "@clack/prompts";
+import { defaultConfigPath as defaultConfigPath4, defaultOutDir as defaultOutDir2, loadToolboxConfig as loadToolboxConfig2 } from "mcp-toolbox-runtime";
 
 // src/lib/slug.ts
 function slugifyServerName(serverName) {
@@ -205,8 +203,9 @@ function slugifyServerName(serverName) {
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { RegistryClient as RegistryClient3 } from "mcp-toolbox-runtime";
 async function introspectServer(args) {
-  const registry = new RegistryClient();
+  const registry = new RegistryClient3();
   const serverName = args.serverConfig.registryId;
   const registryRes = await registry.getServerVersion({
     serverName,
@@ -385,9 +384,9 @@ async function writeLatestSnapshot(args) {
 
 // src/commands/introspect.ts
 function introspectCommand() {
-  const cmd = new Command5("introspect").description("Connect to configured MCP servers and snapshot tools/list").option("--config <path>", "Path to config file", defaultConfigPath()).option("--outDir <path>", "Output directory (default: toolbox)", defaultOutDir()).option("--server <registryId>", "Only introspect a single server (registryId)").option("--json", "Output machine-readable JSON", false).action(async (opts) => {
-    const config = await loadToolboxConfig(opts.config);
-    const outDir = opts.outDir ?? config.generation?.outDir ?? defaultOutDir();
+  const cmd = new Command5("introspect").description("Connect to configured MCP servers and snapshot tools/list").option("--config <path>", "Path to config file", defaultConfigPath4()).option("--outDir <path>", "Output directory (default: toolbox)", defaultOutDir2()).option("--server <registryId>", "Only introspect a single server (registryId)").option("--json", "Output machine-readable JSON", false).action(async (opts) => {
+    const config = await loadToolboxConfig2(opts.config);
+    const outDir = opts.outDir ?? config.generation?.outDir ?? defaultOutDir2();
     const target = opts.server;
     const servers = config.servers.filter((s) => target ? s.registryId === target : true);
     const results = [];
@@ -426,6 +425,7 @@ import path6 from "path";
 import { spawn } from "child_process";
 import { Command as Command6 } from "commander";
 import { confirm as confirm2, isCancel as isCancel3, spinner as spinner4 } from "@clack/prompts";
+import { defaultConfigPath as defaultConfigPath5, loadToolboxConfig as loadToolboxConfig3, fileExists as fileExists3 } from "mcp-toolbox-runtime";
 
 // src/diff/diffSnapshots.ts
 function diffSnapshots(oldSnap, newSnap) {
@@ -583,7 +583,7 @@ async function generateServerTs(args) {
     jsdocLines.push(` * @returns Tool output`);
     jsdocLines.push(" */");
     const ts = [
-      `import { callMcpTool } from "mcp-toolbox/runtime";`,
+      `import { callMcpTool } from "mcp-toolbox-runtime";`,
       ``,
       `// Generated by mcp-toolbox. Do not edit by hand.`,
       ``,
@@ -601,7 +601,7 @@ async function generateServerTs(args) {
       ``
     ].join("\n");
     await fs3.writeFile(filePath, ts, "utf-8");
-    exports.push(`export * from "./tools/${fnName}.js";`);
+    exports.push(`export * from "./tools/${fnName}";`);
   }
   const indexTs = [
     `// Generated by mcp-toolbox. Do not edit by hand.`,
@@ -668,15 +668,15 @@ npx mcp-toolbox sync
 
 // src/commands/sync.ts
 function syncCommand() {
-  const cmd = new Command6("sync").description("Introspect servers, snapshot schemas, and regenerate wrappers").option("--config <path>", "Path to config file", defaultConfigPath()).option("--yes", "Run non-interactively (accept breaking changes)", false).option("--check", "Fail if upstream changed but code not regenerated", false).option("--json", "Output machine-readable JSON", false).option("--no-format", "Skip formatting generated output with oxfmt").action(async (opts) => {
+  const cmd = new Command6("sync").description("Introspect servers, snapshot schemas, and regenerate wrappers").option("--config <path>", "Path to config file", defaultConfigPath5()).option("--yes", "Run non-interactively (accept breaking changes)", false).option("--check", "Fail if upstream changed but code not regenerated", false).option("--json", "Output machine-readable JSON", false).option("--no-format", "Skip formatting generated output with oxfmt").action(async (opts) => {
     const configPath = opts.config;
     const nonInteractive = Boolean(opts.yes);
     const checkOnly = Boolean(opts.check);
     const shouldFormat = Boolean(opts.format);
-    if (!await fileExists(configPath)) {
+    if (!await fileExists3(configPath)) {
       throw new Error(`Config file not found at ${configPath}. Run 'mcp-toolbox init' first.`);
     }
-    const config = await loadToolboxConfig(configPath);
+    const config = await loadToolboxConfig3(configPath);
     const outDir = config.generation.outDir || "toolbox";
     const entriesForCatalog = [];
     const results = [];
@@ -775,7 +775,7 @@ function fingerprintFromTools(snap) {
 }
 async function tryFormatWithOxfmt(targetDir) {
   const localBin = path6.join(process.cwd(), "node_modules", ".bin", "oxfmt");
-  const cmd = await fileExists(localBin).then((ok) => ok ? localBin : "npx");
+  const cmd = await fileExists3(localBin).then((ok) => ok ? localBin : "npx");
   const args = cmd === "npx" ? ["--no-install", "oxfmt", "--write", targetDir] : ["--write", targetDir];
   await spawnAndWait(cmd, args);
 }

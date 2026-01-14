@@ -2,7 +2,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { CallToolResult, ListToolsResult } from "@modelcontextprotocol/sdk/types.js";
-import type { McpToolDefinition } from "../../src/introspect/types.js";
+import type { McpToolDefinition } from "@/introspect/types";
 
 export type MockServerConfig = {
   tools: McpToolDefinition[];
@@ -40,7 +40,8 @@ export class MockMcpServer {
   }
 
   private setupHandlers() {
-    this.server.setRequestHandler("tools/list", async (): Promise<ListToolsResult> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.server.setRequestHandler as any)("tools/list", async (): Promise<ListToolsResult> => {
       if (this.config.simulateFailures?.listTools) {
         throw new Error("Simulated listTools failure");
       }
@@ -57,12 +58,14 @@ export class MockMcpServer {
         tools: this.config.tools.map((tool) => ({
           name: tool.name,
           description: tool.description,
-          inputSchema: tool.inputSchema ?? {},
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          inputSchema: (tool.inputSchema as any) ?? { type: "object", properties: {} },
         })),
       };
     });
 
-    this.server.setRequestHandler("tools/call", async (request): Promise<CallToolResult> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.server.setRequestHandler as any)("tools/call", async (request: any): Promise<CallToolResult> => {
       if (this.config.simulateFailures?.callTool) {
         throw new Error("Simulated callTool failure");
       }
@@ -94,11 +97,13 @@ export class MockMcpServer {
   }
 
   async startSSE(port: number): Promise<string> {
-    this.transport = new SSEServerTransport({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.transport = new (SSEServerTransport as any)({
       path: "/sse",
       port,
     });
-    await this.server.connect(this.transport);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await this.server.connect(this.transport as any);
     return `http://localhost:${port}/sse`;
   }
 
@@ -108,7 +113,7 @@ export class MockMcpServer {
       this.transport = null;
     }
     if (this.process) {
-      this.process.kill();
+      this.process.kill(15); // SIGTERM signal code
       this.process = null;
     }
   }

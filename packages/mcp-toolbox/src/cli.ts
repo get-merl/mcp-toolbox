@@ -1,11 +1,11 @@
 import { Command } from "commander";
 import { intro, outro } from "@clack/prompts";
-import { initCommand } from "./commands/init.js";
-import { registryCommand } from "./commands/registry.js";
-import { addCommand } from "./commands/add.js";
-import { removeCommand } from "./commands/remove.js";
-import { introspectCommand } from "./commands/introspect.js";
-import { syncCommand } from "./commands/sync.js";
+import { initCommand } from "./commands/init";
+import { registryCommand } from "./commands/registry";
+import { addCommand } from "./commands/add";
+import { removeCommand } from "./commands/remove";
+import { introspectCommand } from "./commands/introspect";
+import { syncCommand } from "./commands/sync";
 
 export async function runCli(argv: string[]) {
   const program = new Command()

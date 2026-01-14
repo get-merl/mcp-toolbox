@@ -1,6 +1,6 @@
-import type { DiffSummary } from "./types.js";
-import { stableStringify } from "../snapshot/normalize.js";
-import type { IntrospectedServer, McpToolDefinition } from "../introspect/types.js";
+import type { DiffSummary } from "./types";
+import { stableStringify } from "../snapshot/normalize";
+import type { IntrospectedServer, McpToolDefinition } from "../introspect/types";
 
 export function diffSnapshots(oldSnap: IntrospectedServer, newSnap: IntrospectedServer): DiffSummary {
   const oldTools = indexTools(oldSnap.tools);

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { diffSnapshots } from "../../src/diff/diffSnapshots.js";
-import type { IntrospectedServer } from "../../src/introspect/types.js";
+import { diffSnapshots } from "@/diff/diffSnapshots";
+import type { IntrospectedServer } from "@/introspect/types";
 
 describe("diff and reporting", () => {
   it("should detect tool additions as non-breaking", () => {
