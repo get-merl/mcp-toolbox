@@ -10,7 +10,7 @@ describe("server management (add/remove)", () => {
 
   beforeEach(async () => {
     testDir = await createTestDir();
-    configPath = path.join(testDir, "mcp-toolbox.config.ts");
+    configPath = path.join(testDir, "mcp-toolbox.config.json");
     await createTestConfig(configPath);
   });
 

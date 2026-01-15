@@ -6,11 +6,11 @@ import {
   loadToolboxConfig,
   fileExists,
 } from "mcp-toolbox-runtime";
-import { writeToolboxConfigTs } from "../lib/writeConfig.js";
+import { writeToolboxConfigJson } from "../lib/writeConfig.js";
 
 export function removeCommand() {
   const cmd = new Command("remove")
-    .description("Remove an MCP server from mcp-toolbox.config.ts")
+    .description("Remove an MCP server from mcp-toolbox.config.json")
     .argument("[name]", "Server name")
     .option("--config <path>", "Path to config file", defaultConfigPath())
     .action(async (name: string | undefined, opts) => {
@@ -29,7 +29,7 @@ export function removeCommand() {
       if (config.servers.length === initialLength) {
         throw new Error(`Server '${name}' not found in config`);
       }
-      await writeToolboxConfigTs(configPath, config);
+      await writeToolboxConfigJson(configPath, config);
       const resolvedPath = path.resolve(configPath);
       outro(`Removed server '${name}' from ${resolvedPath}`);
     });

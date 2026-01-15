@@ -1,0 +1,27 @@
+{
+  "runId": "aa190a3f-433d-4ce3-8983-e44b22526ebf",
+  "mode": "baseline",
+  "taskId": "supabase-get-project-url",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "serverOnly",
+  "tool_definitions_count": 20,
+  "tool_definitions_bytes": 9772,
+  "prompt_bytes": 10121,
+  "prompt_tokens": 2185,
+  "completion_tokens": 17,
+  "total_tokens": 2202,
+  "latency_ms": 1285,
+  "response_bytes": 55,
+  "estimated_cost_usd": 0.00681,
+  "success": true,
+  "response_text": "{\"tool_name\":\"supabase.get_project_url\",\"arguments\":{}}",
+  "parsed_tool_call": {
+    "tool_name": "supabase.get_project_url",
+    "arguments": {}
+  },
+  "expected_tool_call": {
+    "tool_name": "supabase.get_project_url",
+    "arguments": {}
+  }
+}

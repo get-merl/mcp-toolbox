@@ -5,6 +5,7 @@ import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import type { ToolboxConfig } from "./config.js";
 import { defaultConfigPath } from "./paths.js";
 import { loadToolboxConfig, fileExists } from "./loadConfig.js";
+import { buildStdioEnv } from "./env.js";
 
 type CallArgs = { serverName: string; toolName: string; input: unknown };
 
@@ -41,7 +42,7 @@ async function loadConfigForRuntime(): Promise<ToolboxConfig> {
   const configPath = explicit ? explicit : defaultConfigPath();
   if (!(await fileExists(configPath))) {
     throw new Error(
-      `mcp-toolbox: config not found at ${configPath}. Set MCP_TOOLBOX_CONFIG or create mcp-toolbox.config.ts`
+      `mcp-toolbox: config not found at ${configPath}. Set MCP_TOOLBOX_CONFIG or create mcp-toolbox.config.json`
     );
   }
   return await loadToolboxConfig(configPath);
@@ -63,10 +64,16 @@ async function chooseTransportRuntime(
         `mcp-toolbox: stdio disabled (security.allowStdioExec=false) for ${serverCfg.name}`
       );
     }
+    const stdioTransport = serverCfg.transport;
+    const env = buildStdioEnv({
+      allowlist: config.security.envAllowlist,
+      baseEnv: process.env,
+      transportEnv: stdioTransport.env,
+    });
     return new StdioClientTransport({
       command: serverCfg.transport.command,
       args: serverCfg.transport.args ?? [],
-      env: serverCfg.transport.env,
+      env,
       // Suppress stderr from child process to keep UI clean
       stderr: "ignore",
     });
@@ -81,3 +88,4 @@ export type { ToolboxConfig, ToolboxServerConfig } from "./config.js";
 // Export shared utilities used by CLI
 export { defaultConfigPath, defaultOutDir, resolveFromCwd } from "./paths.js";
 export { loadToolboxConfig, fileExists } from "./loadConfig.js";
+export { buildStdioEnv } from "./env.js";

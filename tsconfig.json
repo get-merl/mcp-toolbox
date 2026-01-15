@@ -6,5 +6,5 @@
       "mcp-toolbox-runtime": ["./packages/mcp-toolbox-runtime/src/index.ts"]
     }
   },
-  "include": ["toolbox/**/*.ts", "mcp-toolbox.config.ts"]
+  "include": ["toolbox/**/*.ts", "mcp-toolbox.config.json"]
 }

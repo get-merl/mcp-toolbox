@@ -1,0 +1,19 @@
+{
+  "runId": "67eb2620-cd0c-4d43-9f2b-e377588ff5a9",
+  "mode": "baseline",
+  "taskId": "supabase-get-project-url",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "error": {
+    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
+    "status": 400,
+    "payload": {
+      "error": {
+        "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
+        "type": "invalid_request_error",
+        "param": "max_tokens",
+        "code": "unsupported_parameter"
+      }
+    }
+  }
+}

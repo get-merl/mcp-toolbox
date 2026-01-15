@@ -1,0 +1,36 @@
+[
+  {
+    "id": "supabase-get-project-url",
+    "serverSlug": "supabase",
+    "prompt": "Get the Supabase project API URL. Return only the JSON tool call.",
+    "toolNames": ["get_project_url"],
+    "expectedToolCall": {
+      "tool_name": "supabase.get_project_url",
+      "arguments": {}
+    }
+  },
+  {
+    "id": "supabase-list-tables-public",
+    "serverSlug": "supabase",
+    "prompt": "List tables in the public schema. Return only the JSON tool call.",
+    "toolNames": ["list_tables"],
+    "expectedToolCall": {
+      "tool_name": "supabase.list_tables",
+      "arguments": {
+        "schemas": ["public"]
+      }
+    }
+  },
+  {
+    "id": "cloudflare-search-docs-workers",
+    "serverSlug": "cloudflare-observability",
+    "prompt": "Search Cloudflare docs for \"Workers Durable Objects alarms\". Return only the JSON tool call.",
+    "toolNames": ["search_cloudflare_documentation"],
+    "expectedToolCall": {
+      "tool_name": "cloudflare-observability.search_cloudflare_documentation",
+      "arguments": {
+        "query": "Workers Durable Objects alarms"
+      }
+    }
+  }
+]

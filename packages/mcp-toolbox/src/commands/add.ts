@@ -6,12 +6,12 @@ import {
   loadToolboxConfig,
   fileExists,
 } from "mcp-toolbox-runtime";
-import { writeToolboxConfigTs } from "../lib/writeConfig.js";
+import { writeToolboxConfigJson } from "../lib/writeConfig.js";
 import type { ToolboxServerConfig } from "mcp-toolbox-runtime";
 
 export function addCommand() {
   const cmd = new Command("add")
-    .description("Add an MCP server to mcp-toolbox.config.ts")
+    .description("Add an MCP server to mcp-toolbox.config.json")
     .option("--config <path>", "Path to config file", defaultConfigPath())
     .option("--yes", "Run non-interactively", false)
     .action(async (opts) => {
@@ -32,7 +32,6 @@ export function addCommand() {
       let args: string[] | undefined;
       let env: Record<string, string> | undefined;
       let url: string | undefined;
-      let headers: Record<string, string> | undefined;
 
       if (nonInteractive) {
         throw new Error(
@@ -158,42 +157,6 @@ export function addCommand() {
         });
         if (isCancel(urlInput)) return;
         url = String(urlInput).trim();
-
-        // Prompt for headers (optional)
-        const headersInput = await text({
-          message: "Headers (key=value, space-separated, optional):",
-          placeholder: "Authorization=Bearer token",
-          validate(value) {
-            if (value && value.trim().length > 0) {
-              const headerPairs = value
-                .trim()
-                .split(/\s+/)
-                .filter((h) => h.length > 0);
-              for (const pair of headerPairs) {
-                if (!pair.includes("=")) {
-                  return `Invalid format: "${pair}". Expected key=value format`;
-                }
-                const [key] = pair.split("=");
-                if (!key || key.trim().length === 0) {
-                  return `Invalid format: "${pair}". Key cannot be empty`;
-                }
-              }
-            }
-          },
-        });
-        if (!isCancel(headersInput) && headersInput) {
-          const headerPairs = String(headersInput)
-            .trim()
-            .split(/\s+/)
-            .filter((h) => h.length > 0);
-          headers = {};
-          for (const pair of headerPairs) {
-            const [key, ...valueParts] = pair.split("=");
-            if (key && valueParts.length > 0) {
-              headers[key] = valueParts.join("=");
-            }
-          }
-        }
       }
 
       // Create server config
@@ -210,14 +173,11 @@ export function addCommand() {
             : {
                 type: "http",
                 url: url!,
-                ...(headers && Object.keys(headers).length > 0
-                  ? { headers }
-                  : {}),
               },
       };
 
       config.servers.push(serverConfig);
-      await writeToolboxConfigTs(configPath, config);
+      await writeToolboxConfigJson(configPath, config);
       const resolvedPath = path.resolve(configPath);
       outro(`Added server '${serverName}' to ${resolvedPath}`);
     });

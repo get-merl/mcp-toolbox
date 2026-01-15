@@ -2,6 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import { buildStdioEnv } from "mcp-toolbox-runtime";
 import type { ToolboxServerConfig } from "mcp-toolbox-runtime";
 import type { IntrospectedServer, McpToolDefinition } from "./types.js";
 
@@ -17,6 +18,7 @@ type IntrospectionState =
 export async function introspectServer(args: {
   serverConfig: ToolboxServerConfig;
   allowStdioExec: boolean;
+  envAllowlist: string[];
   clientName?: string;
   clientVersion?: string;
   onStatusUpdate?: (status: string) => void;
@@ -32,6 +34,7 @@ export async function introspectServer(args: {
     transport = await chooseTransport({
       serverConfig: args.serverConfig,
       allowStdioExec: args.allowStdioExec,
+      envAllowlist: args.envAllowlist,
       onStatusUpdate: args.onStatusUpdate,
     });
 
@@ -160,6 +163,7 @@ function describeTransport(
 async function chooseTransport(args: {
   serverConfig: ToolboxServerConfig;
   allowStdioExec: boolean;
+  envAllowlist: string[];
   onStatusUpdate?: (status: string) => void;
 }): Promise<Transport> {
   if (args.serverConfig.transport.type === "http") {
@@ -177,18 +181,21 @@ async function chooseTransport(args: {
       );
     }
     // Suppress child process output to keep UI clean
-    const env = {
-      ...process.env,
-      ...args.serverConfig.transport.env,
-      // Suppress mcp-remote verbose logging
-      DEBUG: "",
-      NODE_ENV: process.env["NODE_ENV"] || "production",
-      // Suppress npm warnings from npx
-      npm_config_loglevel: "error",
-      NPM_CONFIG_LOGLEVEL: "error",
-      // Suppress pnpm warnings
-      PNPM_LOG_LEVEL: "error",
-    };
+    const env = buildStdioEnv({
+      allowlist: args.envAllowlist,
+      baseEnv: process.env,
+      transportEnv: args.serverConfig.transport.env,
+      overrides: {
+        // Suppress mcp-remote verbose logging
+        DEBUG: "",
+        NODE_ENV: process.env["NODE_ENV"] || "production",
+        // Suppress npm warnings from npx
+        npm_config_loglevel: "error",
+        NPM_CONFIG_LOGLEVEL: "error",
+        // Suppress pnpm warnings
+        PNPM_LOG_LEVEL: "error",
+      },
+    });
 
     return new StdioClientTransport({
       command: args.serverConfig.transport.command,

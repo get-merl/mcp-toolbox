@@ -7,7 +7,7 @@ import {
   defaultOutDir,
   fileExists,
 } from "mcp-toolbox-runtime";
-import { writeToolboxConfigTs } from "../lib/writeConfig.js";
+import { writeToolboxConfigJson } from "../lib/writeConfig.js";
 import { writeAgentInstructions } from "../lib/writeAgentInstructions.js";
 
 export function initCommand() {
@@ -160,10 +160,10 @@ async function maybeWriteConfig(
     relativeOutDir = outDir;
   }
 
-  await writeToolboxConfigTs(configPath, {
+  await writeToolboxConfigJson(configPath, {
     servers: [],
     generation: { outDir: relativeOutDir, language: "ts" },
-    security: { allowStdioExec: false, envAllowlist: [] },
+    security: { allowStdioExec: false, envAllowlist: ["PATH"] },
     cli: { interactive: true },
   });
   return true;

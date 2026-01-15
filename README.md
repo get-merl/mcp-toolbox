@@ -7,7 +7,7 @@ Instead of loading thousands of tool definitions into an LLM context window, `mc
 ## Structure
 
 - `packages/mcp-toolbox/` — the `mcp-toolbox` CLI implementation (registry client, introspection, snapshotting, diffing, codegen).
-- `mcp-toolbox.config.ts` — project config: which MCP servers are enabled, output location, and security toggles.
+- `mcp-toolbox.config.json` — project config: which MCP servers are enabled, output location, and security toggles.
 - `toolbox/` — **generated output** (checked into the repo) that LLMs and humans import from.
 - `.github/workflows/` — optional automation to keep `toolbox/` in sync via PRs.
 
@@ -53,16 +53,19 @@ The `toolbox/` directory is treated as **fully generated** output. We do not pat
 - `toolbox/.reports/<serverSlug>/*.md`
   - Human-readable diff reports when tool schemas change (breaking vs additive).
 
-## Config explained (`mcp-toolbox.config.ts`)
+## Config explained (`mcp-toolbox.config.json`)
 
 Key fields:
 - `servers[]`: list of MCP server configurations, each with:
   - `name`: unique identifier for the server
-  - `transport`: either `{ type: "stdio", command: string, args?: string[], env?: Record<string, string> }` or `{ type: "http", url: string, headers?: Record<string, string> }`
+  - `transport`: either `{ type: "stdio", command: string, args?: string[], env?: Record<string, string> }` or `{ type: "http", url: string }`
 - `generation.outDir`: where generated output is written (defaults to `./toolbox`).
 - `security.allowStdioExec`:
   - `false` by default (safer).
   - If `true`, `sync` may run stdio servers via the configured command.
+- `security.envAllowlist`:
+  - List of environment variable names copied from the host into stdio transports.
+  - Only allowlisted variables are passed through (explicit `transport.env` entries are always included).
 
 ## Getting Started
 
@@ -92,15 +95,15 @@ Interactive (prompts for name, transport type, and connection details):
 npx mcp-toolbox add
 ```
 
-Or manually edit `mcp-toolbox.config.ts`:
+Or manually edit `mcp-toolbox.config.json`:
 
-```typescript
+```json
 {
-  name: "my-server",
-  transport: {
-    type: "stdio",
-    command: "npx",
-    args: ["mcp-remote", "https://example.com/mcp"]
+  "name": "my-server",
+  "transport": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["mcp-remote", "https://example.com/mcp"]
   }
 }
 ```

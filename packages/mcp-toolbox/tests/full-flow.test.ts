@@ -15,7 +15,7 @@ describe("end-to-end happy path", () => {
   });
 
   it("should complete full user journey successfully", async () => {
-    const configPath = path.join(testDir, "mcp-toolbox.config.ts");
+    const configPath = path.join(testDir, "mcp-toolbox.config.json");
     const outDir = path.join(testDir, "toolbox");
 
     // 1. Initialize
@@ -53,7 +53,7 @@ describe("end-to-end happy path", () => {
 
   it("should maintain consistent state throughout flow", async () => {
     // Ideal: system should be in consistent state at each step
-    const configPath = path.join(testDir, "mcp-toolbox.config.ts");
+    const configPath = path.join(testDir, "mcp-toolbox.config.json");
 
     // Each operation should leave system in valid state
     await runCli(["init", "--config", configPath, "--yes"], { cwd: testDir });
@@ -70,7 +70,7 @@ describe("end-to-end happy path", () => {
     // - Not corrupt state
     // - Provide recovery guidance
 
-    const configPath = path.join(testDir, "mcp-toolbox.config.ts");
+    const configPath = path.join(testDir, "mcp-toolbox.config.json");
 
     // Initialize
     await runCli(["init", "--config", configPath, "--yes"], { cwd: testDir });

@@ -10,7 +10,7 @@ describe("error handling and recovery", () => {
 
   beforeEach(async () => {
     testDir = await createTestDir();
-    configPath = path.join(testDir, "mcp-toolbox.config.ts");
+    configPath = path.join(testDir, "mcp-toolbox.config.json");
   });
 
   afterEach(async () => {

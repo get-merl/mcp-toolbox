@@ -1,0 +1,29 @@
+{
+  "provider": {
+    "kind": "anthropic",
+    "model": "claude-3-5-sonnet-20241022",
+    "apiKeyEnv": "ANTHROPIC_API_KEY"
+  },
+  "pricing": {
+    "input_per_1m": 3.0,
+    "output_per_1m": 15.0
+  },
+  "runsPerTask": 3,
+  "tasksFile": "scripts/context-metrics/tasks.json",
+  "snapshotsDir": "toolbox/.snapshots",
+  "outputDir": "context-metrics-runs",
+  "modes": [
+    {
+      "name": "baseline",
+      "toolDefinitionScope": "serverOnly"
+    },
+    {
+      "name": "toolbox",
+      "toolDefinitionScope": "taskToolsOnly"
+    }
+  ],
+  "prompt": {
+    "system": "You are a tool-using assistant. Available tools are listed below. When you respond, output only a JSON object with keys tool_name and arguments. Do not include any extra text.",
+    "userSuffix": "Choose the best tool for the task and provide arguments."
+  }
+}

@@ -11,7 +11,7 @@ describe("sync command - core functionality", () => {
 
   beforeEach(async () => {
     testDir = await createTestDir();
-    configPath = path.join(testDir, "mcp-toolbox.config.ts");
+    configPath = path.join(testDir, "mcp-toolbox.config.json");
     await createTestConfig(configPath, {
       generation: { outDir: "toolbox", language: "ts" },
       security: { allowStdioExec: true, envAllowlist: [] },
