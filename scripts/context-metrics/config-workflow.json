@@ -1,0 +1,31 @@
+{
+  "provider": {
+    "kind": "openai",
+    "model": "gpt-5.2",
+    "apiKeyEnv": "OPENAI_API_KEY"
+  },
+  "pricing": {
+    "input_per_1m": 3.0,
+    "output_per_1m": 15.0
+  },
+  "runsPerWorkflow": 1,
+  "workflowsFile": "scripts/context-metrics/workflows.json",
+  "snapshotsDir": "toolbox/.snapshots",
+  "toolboxDir": "toolbox",
+  "outputDir": "context-metrics-runs-workflow",
+  "modes": [
+    {
+      "name": "baseline",
+      "toolDefinitionScope": "serverOnly",
+      "filterResult": false
+    },
+    {
+      "name": "toolbox",
+      "toolDefinitionScope": "workflowToolsOnly",
+      "filterResult": true
+    }
+  ],
+  "prompt": {
+    "system": "You are a tool-using assistant working through a multi-step workflow. Available tools are listed below. When asked to perform a task that requires a tool, output a JSON object with keys tool_name and arguments. When asked to summarize or analyze, provide a natural language response."
+  }
+}

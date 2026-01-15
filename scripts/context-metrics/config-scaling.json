@@ -1,0 +1,46 @@
+{
+  "provider": {
+    "kind": "openai",
+    "model": "gpt-5.2",
+    "apiKeyEnv": "OPENAI_API_KEY"
+  },
+  "pricing": {
+    "input_per_1m": 3.0,
+    "output_per_1m": 15.0
+  },
+  "runsPerTask": 2,
+  "tasksFile": "scripts/context-metrics/tasks.json",
+  "snapshotsDir": "toolbox/.snapshots",
+  "syntheticToolsFile": "scripts/context-metrics/synthetic-tools.json",
+  "outputDir": "context-metrics-runs-scaling",
+  "modes": [
+    {
+      "name": "toolbox-1",
+      "toolDefinitionScope": "taskToolsOnly"
+    },
+    {
+      "name": "scaled-30",
+      "toolDefinitionScope": "scaled",
+      "toolCount": 30
+    },
+    {
+      "name": "scaled-50",
+      "toolDefinitionScope": "scaled",
+      "toolCount": 50
+    },
+    {
+      "name": "scaled-100",
+      "toolDefinitionScope": "scaled",
+      "toolCount": 100
+    },
+    {
+      "name": "scaled-150",
+      "toolDefinitionScope": "scaled",
+      "toolCount": 150
+    }
+  ],
+  "prompt": {
+    "system": "You are a tool-using assistant. Available tools are listed below. When you respond, output only a JSON object with keys tool_name and arguments. Do not include any extra text.",
+    "userSuffix": "Choose the best tool for the task and provide arguments."
+  }
+}

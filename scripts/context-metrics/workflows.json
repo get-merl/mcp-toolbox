@@ -1,0 +1,143 @@
+[
+  {
+    "id": "supabase-explore-database",
+    "serverSlug": "supabase",
+    "description": "Explore a Supabase database: list tables, examine schema, query data",
+    "toolNames": ["list_tables", "execute_sql"],
+    "steps": [
+      {
+        "prompt": "List all tables in the public schema to see what data is available.",
+        "expectedTool": "list_tables",
+        "filterConfig": {
+          "type": "summarize_array",
+          "sampleSize": 5
+        }
+      },
+      {
+        "prompt": "Now get the schema details for the tables by querying information_schema.columns. Show columns for the first few tables.",
+        "expectedTool": "execute_sql",
+        "filterConfig": {
+          "type": "summarize_array",
+          "sampleSize": 10
+        }
+      },
+      {
+        "prompt": "Query a sample of data from one of the tables to understand its structure. Select the first 20 rows.",
+        "expectedTool": "execute_sql",
+        "filterConfig": {
+          "type": "summarize_array",
+          "sampleSize": 5
+        }
+      },
+      {
+        "prompt": "Based on what you've learned about the database, provide a brief summary of the database structure and what kind of data it contains.",
+        "expectedTool": null
+      }
+    ]
+  },
+  {
+    "id": "supabase-check-health",
+    "serverSlug": "supabase",
+    "description": "Check Supabase project health: get URL, check logs, review advisors",
+    "toolNames": ["get_project_url", "get_logs", "get_advisors"],
+    "steps": [
+      {
+        "prompt": "Get the project URL to verify the project is accessible.",
+        "expectedTool": "get_project_url",
+        "filterConfig": null
+      },
+      {
+        "prompt": "Check the recent API logs for any errors or issues.",
+        "expectedTool": "get_logs",
+        "filterConfig": {
+          "type": "truncate",
+          "maxChars": 3000
+        }
+      },
+      {
+        "prompt": "Get advisor recommendations to check for security or performance issues.",
+        "expectedTool": "get_advisors",
+        "filterConfig": {
+          "type": "summarize_array",
+          "sampleSize": 5
+        }
+      },
+      {
+        "prompt": "Based on the URL, logs, and advisors, provide a health summary of the Supabase project.",
+        "expectedTool": null
+      }
+    ]
+  },
+  {
+    "id": "cloudflare-workers-analysis",
+    "serverSlug": "cloudflare-observability",
+    "description": "Analyze Cloudflare Workers: list workers, check observability data",
+    "toolNames": ["workers_list", "observability_keys", "query_worker_observability"],
+    "steps": [
+      {
+        "prompt": "List all Cloudflare Workers in the account.",
+        "expectedTool": "workers_list",
+        "filterConfig": {
+          "type": "summarize_array",
+          "sampleSize": 5
+        }
+      },
+      {
+        "prompt": "Get the available observability keys to understand what metrics are available.",
+        "expectedTool": "observability_keys",
+        "filterConfig": {
+          "type": "truncate",
+          "maxChars": 2000
+        }
+      },
+      {
+        "prompt": "Query recent worker observability events to check for errors or performance issues.",
+        "expectedTool": "query_worker_observability",
+        "filterConfig": {
+          "type": "truncate",
+          "maxChars": 4000
+        }
+      },
+      {
+        "prompt": "Based on the workers list and observability data, provide a summary of the Workers deployment health.",
+        "expectedTool": null
+      }
+    ]
+  },
+  {
+    "id": "supabase-migration-workflow",
+    "serverSlug": "supabase",
+    "description": "Review database migrations and extensions",
+    "toolNames": ["list_migrations", "list_extensions", "list_tables"],
+    "steps": [
+      {
+        "prompt": "List all migrations that have been applied to the database.",
+        "expectedTool": "list_migrations",
+        "filterConfig": {
+          "type": "summarize_array",
+          "sampleSize": 10
+        }
+      },
+      {
+        "prompt": "List all extensions installed in the database.",
+        "expectedTool": "list_extensions",
+        "filterConfig": {
+          "type": "summarize_array",
+          "sampleSize": 10
+        }
+      },
+      {
+        "prompt": "List all tables to see the current schema state.",
+        "expectedTool": "list_tables",
+        "filterConfig": {
+          "type": "summarize_array",
+          "sampleSize": 10
+        }
+      },
+      {
+        "prompt": "Summarize the database migration history and current state.",
+        "expectedTool": null
+      }
+    ]
+  }
+]
