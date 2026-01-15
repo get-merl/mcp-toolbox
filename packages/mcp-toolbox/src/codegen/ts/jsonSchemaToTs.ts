@@ -1,8 +1,64 @@
-// Very small subset converter for MVP:
-// - object with properties -> interface
-// - primitive -> primitive
-// - anything else -> unknown
-export function jsonSchemaToTsType(schema: any): string {
+import { compile } from "json-schema-to-typescript";
+
+/**
+ * Convert a JSON Schema to a TypeScript type string.
+ * Falls back to 'unknown' for schemas that can't be converted.
+ */
+export async function jsonSchemaToTsType(schema: unknown): Promise<string> {
+  if (!schema || typeof schema !== "object") return "unknown";
+
+  try {
+    // Use compile but extract just the type (not the full interface declaration)
+    const result = await compile(schema as any, "Temp", {
+      bannerComment: "",
+      additionalProperties: false,
+      declareExternallyReferenced: false,
+      enableConstEnums: true,
+    });
+    // Extract the type from the result (crude but works for simple cases)
+    const match = result.match(/export (?:type|interface) Temp\s*=?\s*({[\s\S]*}|[^{;]+)/);
+    if (match && match[1]) {
+      return match[1].trim().replace(/;$/, "");
+    }
+    return "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
+/**
+ * Convert a JSON Schema to a TypeScript interface or type alias.
+ * Uses json-schema-to-typescript for robust conversion of complex schemas
+ * including anyOf, oneOf, $ref, enums, and nested objects.
+ */
+export async function jsonSchemaToTsInterface(
+  name: string,
+  schema: unknown
+): Promise<string> {
+  if (!schema || typeof schema !== "object") {
+    return `export type ${name} = unknown;\n`;
+  }
+
+  try {
+    const result = await compile(schema as any, name, {
+      bannerComment: "",
+      additionalProperties: false,
+      declareExternallyReferenced: false,
+      enableConstEnums: true,
+      unknownAny: true,
+    });
+    return result;
+  } catch {
+    // Fallback for malformed schemas
+    return `export type ${name} = unknown;\n`;
+  }
+}
+
+/**
+ * Synchronous fallback for simple schemas (used when async is not needed).
+ * Only handles basic types - use jsonSchemaToTsInterface for full support.
+ */
+export function jsonSchemaToTsTypeSync(schema: any): string {
   if (!schema || typeof schema !== "object") return "unknown";
 
   const t = schema.type;
@@ -11,7 +67,7 @@ export function jsonSchemaToTsType(schema: any): string {
   if (t === "boolean") return "boolean";
   if (t === "null") return "null";
   if (t === "array") {
-    return `${jsonSchemaToTsType(schema.items)}[]`;
+    return `${jsonSchemaToTsTypeSync(schema.items)}[]`;
   }
   if (t === "object" || schema.properties) {
     return "Record<string, unknown>";
@@ -22,30 +78,3 @@ export function jsonSchemaToTsType(schema: any): string {
   if (Array.isArray(schema.oneOf)) return "unknown";
   return "unknown";
 }
-
-export function jsonSchemaToTsInterface(name: string, schema: any): string {
-  if (!schema || typeof schema !== "object") {
-    return `export type ${name} = unknown;\n`;
-  }
-  const isObject = schema.type === "object" || schema.properties;
-  if (!isObject) {
-    return `export type ${name} = ${jsonSchemaToTsType(schema)};\n`;
-  }
-
-  const props: Record<string, any> = schema.properties ?? {};
-  const required: string[] = Array.isArray(schema.required) ? schema.required : [];
-  const lines: string[] = [];
-  lines.push(`export interface ${name} {`);
-  for (const key of Object.keys(props)) {
-    const optional = required.includes(key) ? "" : "?";
-    lines.push(`  ${safeProp(key)}${optional}: ${jsonSchemaToTsType(props[key])};`);
-  }
-  lines.push(`}`);
-  lines.push("");
-  return lines.join("\n") + "\n";
-}
-
-function safeProp(key: string) {
-  return /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? key : JSON.stringify(key);
-}
-

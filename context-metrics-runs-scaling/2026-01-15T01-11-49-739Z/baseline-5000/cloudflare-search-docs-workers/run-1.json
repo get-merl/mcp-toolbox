@@ -1,0 +1,19 @@
+{
+  "runId": "33ba0821-4725-4edf-b26f-e083bcb88349",
+  "mode": "baseline-5000",
+  "taskId": "cloudflare-search-docs-workers",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "error": {
+    "message": "Request too large for gpt-5.2 in organization org-1ZdMezvKb5rknoTrjVpvrNlc on tokens per min (TPM): Limit 500000, Requested 672216. The input or output tokens must be reduced in order to run successfully. Visit https://platform.openai.com/account/rate-limits to learn more.",
+    "status": 429,
+    "payload": {
+      "error": {
+        "message": "Request too large for gpt-5.2 in organization org-1ZdMezvKb5rknoTrjVpvrNlc on tokens per min (TPM): Limit 500000, Requested 672216. The input or output tokens must be reduced in order to run successfully. Visit https://platform.openai.com/account/rate-limits to learn more.",
+        "type": "tokens",
+        "param": null,
+        "code": "rate_limit_exceeded"
+      }
+    }
+  }
+}

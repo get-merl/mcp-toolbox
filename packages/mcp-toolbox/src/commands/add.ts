@@ -1,30 +1,25 @@
 import { Command } from "commander";
 import path from "node:path";
 import { isCancel, select, text, confirm, outro } from "@clack/prompts";
-import {
-  defaultConfigPath,
-  loadToolboxConfig,
-  fileExists,
-} from "mcp-toolbox-runtime";
+import { loadToolboxConfigWithPath } from "@merl-ai/mcp-toolbox-runtime";
 import { writeToolboxConfigJson } from "../lib/writeConfig.js";
-import type { ToolboxServerConfig } from "mcp-toolbox-runtime";
+import type { ToolboxServerConfig } from "@merl-ai/mcp-toolbox-runtime";
 
 export function addCommand() {
   const cmd = new Command("add")
     .description("Add an MCP server to mcp-toolbox.config.json")
-    .option("--config <path>", "Path to config file", defaultConfigPath())
+    .option("--config <path>", "Path to config file (auto-detected if not specified)")
+    .option("--name <name>", "Server name (required in non-interactive mode)")
+    .option("--transport <type>", "Transport type: stdio or http")
+    .option("--command <cmd>", "Command for stdio transport")
+    .option("--args <args>", "Comma-separated args for stdio transport")
+    .option("--url <url>", "URL for http transport")
     .option("--yes", "Run non-interactively", false)
     .action(async (opts) => {
-      const configPath: string = opts.config;
+      const configPathOpt: string | undefined = opts.config;
       const nonInteractive: boolean = Boolean(opts.yes);
 
-      if (!(await fileExists(configPath))) {
-        throw new Error(
-          `Config file not found at ${configPath}. Run 'mcp-toolbox init' first.`
-        );
-      }
-
-      const config = await loadToolboxConfig(configPath);
+      const { config, filepath: configPath } = await loadToolboxConfigWithPath(configPathOpt);
 
       let serverName: string | undefined;
       let transportType: "stdio" | "http" | undefined;
@@ -34,9 +29,59 @@ export function addCommand() {
       let url: string | undefined;
 
       if (nonInteractive) {
-        throw new Error(
-          "Non-interactive mode not yet supported. Please run without --yes flag."
-        );
+        // Non-interactive mode: use CLI arguments
+        serverName = opts.name;
+        if (!serverName) {
+          throw new Error("--name is required in non-interactive mode");
+        }
+
+        transportType = opts.transport as "stdio" | "http" | undefined;
+        if (!transportType || (transportType !== "stdio" && transportType !== "http")) {
+          throw new Error("--transport must be 'stdio' or 'http' in non-interactive mode");
+        }
+
+        if (transportType === "stdio") {
+          command = opts.command;
+          if (!command) {
+            throw new Error("--command is required for stdio transport in non-interactive mode");
+          }
+          if (opts.args) {
+            args = opts.args.split(",").map((a: string) => a.trim()).filter((a: string) => a.length > 0);
+          }
+        } else {
+          url = opts.url;
+          if (!url) {
+            throw new Error("--url is required for http transport in non-interactive mode");
+          }
+        }
+
+        // Create server config directly
+        const serverConfig: ToolboxServerConfig = {
+          name: serverName,
+          transport:
+            transportType === "stdio"
+              ? {
+                  type: "stdio",
+                  command: command!,
+                  ...(args && args.length > 0 ? { args } : {}),
+                }
+              : {
+                  type: "http",
+                  url: url!,
+                },
+        };
+
+        // Check if server already exists
+        const existingIndex = config.servers.findIndex((s) => s.name === serverName);
+        if (existingIndex !== -1) {
+          config.servers[existingIndex] = serverConfig;
+        } else {
+          config.servers.push(serverConfig);
+        }
+
+        await writeToolboxConfigJson(configPath, config);
+        outro(`Added server '${serverName}' to ${path.resolve(configPath)}`);
+        return;
       }
 
       // Prompt for server name

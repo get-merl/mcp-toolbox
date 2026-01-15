@@ -1,0 +1,29 @@
+{
+  "runId": "33ba0821-4725-4edf-b26f-e083bcb88349",
+  "createdAt": "2026-01-15T01:13:28.046Z",
+  "modes": [
+    "toolbox",
+    "baseline-30",
+    "baseline-50",
+    "baseline-100",
+    "baseline-150",
+    "baseline-200",
+    "baseline-500",
+    "baseline-1000",
+    "baseline-2000",
+    "baseline-5000",
+    "baseline-10000",
+    "baseline-20000"
+  ],
+  "tasks": [
+    "supabase-get-project-url",
+    "supabase-list-tables-public",
+    "cloudflare-search-docs-workers"
+  ],
+  "provider": {
+    "kind": "openai",
+    "model": "gpt-5.2",
+    "apiKeyEnv": "OPENAI_API_KEY"
+  },
+  "runsPerTask": 2
+}

@@ -1,0 +1,57 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "toolbox",
+  "taskId": "supabase-list-tables-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "taskToolsOnly",
+  "filter_result": true,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 255,
+      "completion_tokens": 19,
+      "total_tokens": 274,
+      "latency_ms": 687,
+      "tool_definitions_count": 1,
+      "tool_definitions_bytes": 327,
+      "response": "{\"tool_name\":\"supabase.list_tables\",\"arguments\":{\"schemas\":[\"public\"]}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.list_tables",
+        "arguments": {
+          "schemas": [
+            "public"
+          ]
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 1860,
+      "result_bytes_raw": 7939,
+      "result_bytes_filtered": 7967,
+      "filter_applied": "summarize_array"
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 2269,
+      "completion_tokens": 345,
+      "total_tokens": 2614,
+      "latency_ms": 3924,
+      "result_bytes_in_context": 8009,
+      "response": "The `public` schema contains 5 tables, all with RLS enabled and currently showing 0 rows:\n\n- **public.multiplayer_sessions** (PK: `id`)\n  - Key columns: `story_version_id` (FK → `public.story_versions.id`), `host_id` (FK → `public.users.id`), `status` enum (`pending|active|completed`, default `pending`), `settings`/`session_state` jsonb, `version` int (default 0), timestamps.\n\n- **public.saves** (PK: `id`)\n  - Key columns: `story_id` (FK → `public.stories.id`), `user_id` (FK → `public.users.id`), `save` jsonb, `mode` text with check constraint (`solo` or `multiplayer`, default `solo`), timestamps.\n\n- **public.stories** (PK: `id`)\n  - Key columns: `slug` (unique), `title`, `summary`, `created_by` (nullable FK → `public.users.id`), timestamps.\n\n- **public.story_versions** (PK: `id`)\n  - Key columns: `story_id` (FK → `public.stories.id`), `status` enum (`draft|published`, default `draft`), `outline` jsonb, `published_at`, `engine_range`, `shell` jsonb (default `{\"key\":\"shell.ebook\"}`), `theme`, timestamps.\n\n- **public.users** (PK: `id`)\n  - Key columns: `username`, `avatar_url`, timestamps; `id` is also an FK → `auth.users.id`."
+    }
+  ],
+  "total_prompt_tokens": 2524,
+  "total_completion_tokens": 364,
+  "total_tokens": 2888,
+  "latency_ms": 6471,
+  "result_bytes_raw": 7939,
+  "result_bytes_filtered": 7967,
+  "tool_definitions_count": 1,
+  "tool_definitions_bytes": 327,
+  "prompt_bytes": 1157,
+  "response_bytes": 1156,
+  "estimated_cost_usd": 0.013032,
+  "success": true
+}

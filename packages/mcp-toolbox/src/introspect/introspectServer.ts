@@ -2,8 +2,8 @@ import { Client } from "@modelcontextprotocol/sdk/client";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import { buildStdioEnv } from "mcp-toolbox-runtime";
-import type { ToolboxServerConfig } from "mcp-toolbox-runtime";
+import { buildStdioEnv } from "@merl-ai/mcp-toolbox-runtime";
+import type { ToolboxServerConfig } from "@merl-ai/mcp-toolbox-runtime";
 import type { IntrospectedServer, McpToolDefinition } from "./types.js";
 
 type IntrospectionState =
@@ -103,6 +103,7 @@ export async function introspectServer(args: {
         name: t.name,
         description: t.description,
         inputSchema: t.inputSchema,
+        outputSchema: t.outputSchema,
       })
     );
 
@@ -167,8 +168,6 @@ async function chooseTransport(args: {
   onStatusUpdate?: (status: string) => void;
 }): Promise<Transport> {
   if (args.serverConfig.transport.type === "http") {
-    // Note: StreamableHTTPClientTransport doesn't support headers in options
-    // Headers would need to be handled via authProvider or other mechanisms
     return new StreamableHTTPClientTransport(
       new URL(args.serverConfig.transport.url)
     );
@@ -180,7 +179,8 @@ async function chooseTransport(args: {
         `Refusing to run stdio server '${args.serverConfig.name}' because security.allowStdioExec=false. Set security.allowStdioExec=true to enable stdio execution.`
       );
     }
-    // Suppress child process output to keep UI clean
+
+    // Build environment variables
     const env = buildStdioEnv({
       allowlist: args.envAllowlist,
       baseEnv: process.env,

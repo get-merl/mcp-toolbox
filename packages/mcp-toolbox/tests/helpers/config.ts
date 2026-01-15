@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import type { ToolboxConfig } from "mcp-toolbox-runtime";
+import type { ToolboxConfig } from "@merl-ai/mcp-toolbox-runtime";
 import { writeFileAtomic } from "./fs";
 
 export async function createTestConfig(

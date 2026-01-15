@@ -4,6 +4,7 @@
   "workspaces": [
     "packages/*"
   ],
+  "type": "module",
   "scripts": {
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
@@ -14,9 +15,10 @@
     "mcp-toolbox": "pnpm --filter mcp-toolbox exec mcp-toolbox"
   },
   "dependencies": {
-    "mcp-toolbox-runtime": "workspace:*"
+    "@merl-ai/mcp-toolbox-runtime": "workspace:*"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "oxfmt": "^0.24.0",
     "oxlint": "^1.39.0",
     "turbo": "^2.7.4"

@@ -1,0 +1,57 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "toolbox",
+  "taskId": "supabase-list-tables-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "taskToolsOnly",
+  "filter_result": true,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 255,
+      "completion_tokens": 19,
+      "total_tokens": 274,
+      "latency_ms": 747,
+      "tool_definitions_count": 1,
+      "tool_definitions_bytes": 327,
+      "response": "{\"tool_name\":\"supabase.list_tables\",\"arguments\":{\"schemas\":[\"public\"]}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.list_tables",
+        "arguments": {
+          "schemas": [
+            "public"
+          ]
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 3233,
+      "result_bytes_raw": 7939,
+      "result_bytes_filtered": 7967,
+      "filter_applied": "summarize_array"
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 2269,
+      "completion_tokens": 278,
+      "total_tokens": 2547,
+      "latency_ms": 4594,
+      "result_bytes_in_context": 8009,
+      "response": "The `public` schema contains 5 tables, all with RLS enabled and currently showing 0 rows:\n\n- **multiplayer_sessions**: session records for a story version (PK `id`), with `story_version_id → story_versions.id` and `host_id → users.id`. Includes `status` enum (`pending|active|completed`), `settings`/`session_state` jsonb, and timestamps.\n- **saves**: user saves for a story (PK `id`), with `story_id → stories.id` and `user_id → users.id`. Includes `save` jsonb and `mode` constrained to `solo` or `multiplayer`.\n- **stories**: top-level story metadata (PK `id`), `slug` is unique, optional `created_by → users.id`, and timestamps.\n- **story_versions**: versioned content for stories (PK `id`), with `story_id → stories.id`. Includes `status` enum (`draft|published`), `outline` jsonb, `published_at`, and other config fields (`engine_range`, `shell`, `theme`).\n- **users**: app user profile table (PK `id`), linked to `auth.users.id` via `users_auth_id_fkey`, plus optional `username`/`avatar_url` and timestamps."
+    }
+  ],
+  "total_prompt_tokens": 2524,
+  "total_completion_tokens": 297,
+  "total_tokens": 2821,
+  "latency_ms": 8574,
+  "result_bytes_raw": 7939,
+  "result_bytes_filtered": 7967,
+  "tool_definitions_count": 1,
+  "tool_definitions_bytes": 327,
+  "prompt_bytes": 1157,
+  "response_bytes": 1027,
+  "estimated_cost_usd": 0.012027,
+  "success": true
+}

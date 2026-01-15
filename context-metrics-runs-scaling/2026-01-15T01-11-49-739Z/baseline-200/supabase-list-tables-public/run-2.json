@@ -1,0 +1,35 @@
+{
+  "runId": "33ba0821-4725-4edf-b26f-e083bcb88349",
+  "mode": "baseline-200",
+  "taskId": "supabase-list-tables-public",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "scaledBaseline",
+  "tool_definitions_count": 200,
+  "tool_definitions_bytes": 66478,
+  "prompt_bytes": 67276,
+  "prompt_tokens": 15018,
+  "completion_tokens": 19,
+  "total_tokens": 15037,
+  "latency_ms": 1147,
+  "response_bytes": 71,
+  "estimated_cost_usd": 0.045339,
+  "success": true,
+  "response_text": "{\"tool_name\":\"supabase.list_tables\",\"arguments\":{\"schemas\":[\"public\"]}}",
+  "parsed_tool_call": {
+    "tool_name": "supabase.list_tables",
+    "arguments": {
+      "schemas": [
+        "public"
+      ]
+    }
+  },
+  "expected_tool_call": {
+    "tool_name": "supabase.list_tables",
+    "arguments": {
+      "schemas": [
+        "public"
+      ]
+    }
+  }
+}

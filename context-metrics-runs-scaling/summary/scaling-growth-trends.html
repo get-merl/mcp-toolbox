@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scaling Test Growth Trends: Baseline vs Toolbox</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+          sans-serif;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+      .chart-container {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .chart-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 15px;
+      }
+      canvas {
+        max-height: 500px;
+      }
+      .insights {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .insights h2 {
+        color: #333;
+        margin-top: 0;
+      }
+      .insights ul {
+        line-height: 1.8;
+        color: #555;
+      }
+      .comparison-table {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #333;
+      }
+      tr:hover {
+        background-color: #f8f9fa;
+      }
+      .savings {
+        color: #28a745;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Scaling Test Growth Trends: Baseline vs Toolbox</h1>
+    <p class="subtitle">Comparing context usage across tool counts from 30 to 1,000 tools</p>
+
+    <div class="comparison-table">
+      <div class="chart-title">Baseline vs Toolbox Comparison</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Tool Count</th>
+            <th>Baseline Tokens</th>
+            <th>Toolbox Tokens</th>
+            <th>Token Savings</th>
+            <th>Baseline Bytes</th>
+            <th>Toolbox Bytes</th>
+            <th>Byte Savings</th>
+            <th>Baseline Cost ($)</th>
+            <th>Toolbox Cost ($)</th>
+            <th>Cost Savings</th>
+          </tr>
+        </thead>
+        <tbody id="comparisonTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Total Tokens: Baseline vs Toolbox</div>
+      <canvas id="tokensChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Tool Definition Bytes: Baseline vs Toolbox</div>
+      <canvas id="bytesChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Estimated Cost: Baseline vs Toolbox</div>
+      <canvas id="costChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Savings Percentage: Toolbox vs Baseline</div>
+      <canvas id="savingsChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Baseline Growth Trend (Log Scale)</div>
+      <canvas id="logScaleChart"></canvas>
+    </div>
+
+    <div class="insights">
+      <h2>Key Insights</h2>
+      <ul id="insightsList"></ul>
+    </div>
+
+    <script>
+      // Data from scaling test results - filtered to successful runs only
+      const data = [
+        {
+          count: 30,
+          baseline: { tokens: 3042, bytes: 13021, cost: 0.009354 },
+          toolbox: { tokens: 269, bytes: 327, cost: 0.001035 },
+        },
+        {
+          count: 50,
+          baseline: { tokens: 4246, bytes: 18213, cost: 0.012966 },
+          toolbox: { tokens: 269, bytes: 327, cost: 0.001035 },
+        },
+        {
+          count: 100,
+          baseline: { tokens: 7713, bytes: 33691, cost: 0.023367 },
+          toolbox: { tokens: 269, bytes: 327, cost: 0.001035 },
+        },
+        {
+          count: 150,
+          baseline: { tokens: 11216, bytes: 49135, cost: 0.033876 },
+          toolbox: { tokens: 269, bytes: 327, cost: 0.001035 },
+        },
+        {
+          count: 200,
+          baseline: { tokens: 15037, bytes: 66478, cost: 0.045339 },
+          toolbox: { tokens: 269, bytes: 327, cost: 0.001035 },
+        },
+        {
+          count: 500,
+          baseline: { tokens: 36101, bytes: 159978, cost: 0.108531 },
+          toolbox: { tokens: 269, bytes: 327, cost: 0.001035 },
+        },
+        {
+          count: 1000,
+          baseline: { tokens: 71422, bytes: 317221, cost: 0.21447 },
+          toolbox: { tokens: 269, bytes: 327, cost: 0.001035 },
+        },
+      ];
+
+      const toolCounts = data.map((d) => d.count);
+      const baselineTokens = data.map((d) => d.baseline.tokens);
+      const toolboxTokens = data.map((d) => d.toolbox.tokens);
+      const baselineBytes = data.map((d) => d.baseline.bytes);
+      const toolboxBytes = data.map((d) => d.toolbox.bytes);
+      const baselineCost = data.map((d) => d.baseline.cost);
+      const toolboxCost = data.map((d) => d.toolbox.cost);
+
+      // Calculate savings percentages
+      const tokenSavings = data.map((d) =>
+        (((d.baseline.tokens - d.toolbox.tokens) / d.baseline.tokens) * 100).toFixed(1),
+      );
+      const byteSavings = data.map((d) =>
+        (((d.baseline.bytes - d.toolbox.bytes) / d.baseline.bytes) * 100).toFixed(1),
+      );
+      const costSavings = data.map((d) =>
+        (((d.baseline.cost - d.toolbox.cost) / d.baseline.cost) * 100).toFixed(1),
+      );
+
+      // Populate comparison table
+      const tableBody = document.getElementById("comparisonTableBody");
+      data.forEach((d, i) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                <td><strong>${d.count}</strong></td>
+                <td>${d.baseline.tokens.toLocaleString()}</td>
+                <td>${d.toolbox.tokens.toLocaleString()}</td>
+                <td class="savings">${tokenSavings[i]}%</td>
+                <td>${d.baseline.bytes.toLocaleString()}</td>
+                <td>${d.toolbox.bytes.toLocaleString()}</td>
+                <td class="savings">${byteSavings[i]}%</td>
+                <td>$${d.baseline.cost.toFixed(6)}</td>
+                <td>$${d.toolbox.cost.toFixed(6)}</td>
+                <td class="savings">${costSavings[i]}%</td>
+            `;
+        tableBody.appendChild(row);
+      });
+
+      // Generate insights
+      const insightsList = document.getElementById("insightsList");
+      const maxScale = data[data.length - 1];
+      const maxTokenSavings = Math.max(...tokenSavings.map(parseFloat));
+      const maxByteSavings = Math.max(...byteSavings.map(parseFloat));
+      const maxCostSavings = Math.max(...costSavings.map(parseFloat));
+
+      insightsList.innerHTML = `
+            <li><strong>Constant Toolbox Performance</strong>: Toolbox mode maintains constant token usage (${toolboxTokens[0]} tokens) regardless of tool count, demonstrating perfect scaling efficiency.</li>
+            <li><strong>Linear Baseline Growth</strong>: Baseline mode shows linear growth in context usage as tool count increases from 30 to 1,000 tools.</li>
+            <li><strong>Maximum Savings</strong>: At ${maxScale.count} tools, toolbox saves <span class="savings">${parseFloat(tokenSavings[tokenSavings.length - 1]).toFixed(1)}%</span> tokens, <span class="savings">${parseFloat(byteSavings[byteSavings.length - 1]).toFixed(1)}%</span> bytes, and <span class="savings">${parseFloat(costSavings[costSavings.length - 1]).toFixed(1)}%</span> cost compared to baseline.</li>
+            <li><strong>Scaling Efficiency</strong>: As tool count increases, the savings percentage increases, showing that toolbox approach becomes more valuable at scale.</li>
+            <li><strong>Cost Impact</strong>: At 1,000 tools, baseline costs $${maxScale.baseline.cost.toFixed(6)} per request vs toolbox at $${maxScale.toolbox.cost.toFixed(6)} - a ${parseFloat(costSavings[costSavings.length - 1]).toFixed(1)}% reduction.</li>
+            <li><strong>Token Efficiency</strong>: Baseline uses ${(maxScale.baseline.tokens / maxScale.count).toFixed(1)} tokens per tool at ${maxScale.count} tools, while toolbox uses only ${(maxScale.toolbox.tokens / maxScale.count).toFixed(1)} tokens per tool (constant at all scales).</li>
+        `;
+
+      const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: "top",
+          },
+          tooltip: {
+            mode: "index",
+            intersect: false,
+            callbacks: {
+              label: function (context) {
+                let label = context.dataset.label || "";
+                if (label) {
+                  label += ": ";
+                }
+                if (context.parsed.y !== null) {
+                  if (context.datasetIndex === 0 || context.datasetIndex === 1) {
+                    label += context.parsed.y.toLocaleString();
+                  } else if (context.datasetIndex === 2) {
+                    label += context.parsed.y.toFixed(1) + "%";
+                  } else {
+                    label += "$" + context.parsed.y.toFixed(6);
+                  }
+                }
+                return label;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Tool Count",
+            },
+            type: "linear",
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Value",
+            },
+            beginAtZero: true,
+          },
+        },
+      };
+
+      // Total Tokens Chart
+      new Chart(document.getElementById("tokensChart"), {
+        type: "line",
+        data: {
+          labels: toolCounts,
+          datasets: [
+            {
+              label: "Baseline Tokens",
+              data: baselineTokens,
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.1)",
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+            },
+            {
+              label: "Toolbox Tokens",
+              data: toolboxTokens,
+              borderColor: "rgb(75, 192, 192)",
+              backgroundColor: "rgba(75, 192, 192, 0.1)",
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+            },
+          ],
+        },
+        options: {
+          ...chartOptions,
+          scales: {
+            ...chartOptions.scales,
+            y: {
+              ...chartOptions.scales.y,
+              title: {
+                display: true,
+                text: "Total Tokens",
+              },
+            },
+          },
+        },
+      });
+
+      // Tool Definition Bytes Chart
+      new Chart(document.getElementById("bytesChart"), {
+        type: "line",
+        data: {
+          labels: toolCounts,
+          datasets: [
+            {
+              label: "Baseline Bytes",
+              data: baselineBytes,
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.1)",
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+            },
+            {
+              label: "Toolbox Bytes",
+              data: toolboxBytes,
+              borderColor: "rgb(75, 192, 192)",
+              backgroundColor: "rgba(75, 192, 192, 0.1)",
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+            },
+          ],
+        },
+        options: {
+          ...chartOptions,
+          scales: {
+            ...chartOptions.scales,
+            y: {
+              ...chartOptions.scales.y,
+              title: {
+                display: true,
+                text: "Tool Definition Bytes",
+              },
+            },
+          },
+        },
+      });
+
+      // Cost Chart
+      new Chart(document.getElementById("costChart"), {
+        type: "line",
+        data: {
+          labels: toolCounts,
+          datasets: [
+            {
+              label: "Baseline Cost",
+              data: baselineCost,
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.1)",
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+            },
+            {
+              label: "Toolbox Cost",
+              data: toolboxCost,
+              borderColor: "rgb(75, 192, 192)",
+              backgroundColor: "rgba(75, 192, 192, 0.1)",
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+            },
+          ],
+        },
+        options: {
+          ...chartOptions,
+          scales: {
+            ...chartOptions.scales,
+            y: {
+              ...chartOptions.scales.y,
+              title: {
+                display: true,
+                text: "Estimated Cost (USD)",
+              },
+            },
+          },
+        },
+      });
+
+      // Savings Percentage Chart
+      new Chart(document.getElementById("savingsChart"), {
+        type: "bar",
+        data: {
+          labels: toolCounts,
+          datasets: [
+            {
+              label: "Token Savings %",
+              data: tokenSavings.map(parseFloat),
+              backgroundColor: "rgba(54, 162, 235, 0.6)",
+              borderColor: "rgb(54, 162, 235)",
+              borderWidth: 1,
+            },
+            {
+              label: "Byte Savings %",
+              data: byteSavings.map(parseFloat),
+              backgroundColor: "rgba(75, 192, 192, 0.6)",
+              borderColor: "rgb(75, 192, 192)",
+              borderWidth: 1,
+            },
+            {
+              label: "Cost Savings %",
+              data: costSavings.map(parseFloat),
+              backgroundColor: "rgba(153, 102, 255, 0.6)",
+              borderColor: "rgb(153, 102, 255)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          ...chartOptions,
+          scales: {
+            ...chartOptions.scales,
+            y: {
+              ...chartOptions.scales.y,
+              title: {
+                display: true,
+                text: "Savings Percentage (%)",
+              },
+              max: 100,
+            },
+          },
+        },
+      });
+
+      // Log Scale Chart for Baseline Growth
+      new Chart(document.getElementById("logScaleChart"), {
+        type: "line",
+        data: {
+          labels: toolCounts,
+          datasets: [
+            {
+              label: "Baseline Tokens (Log Scale)",
+              data: baselineTokens,
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.1)",
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+            },
+            {
+              label: "Baseline Bytes (Log Scale)",
+              data: baselineBytes,
+              borderColor: "rgb(255, 159, 64)",
+              backgroundColor: "rgba(255, 159, 64, 0.1)",
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+              yAxisID: "y1",
+            },
+          ],
+        },
+        options: {
+          ...chartOptions,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Tool Count",
+              },
+              type: "logarithmic",
+            },
+            y: {
+              type: "logarithmic",
+              title: {
+                display: true,
+                text: "Tokens (Log Scale)",
+              },
+              position: "left",
+            },
+            y1: {
+              type: "logarithmic",
+              title: {
+                display: true,
+                text: "Bytes (Log Scale)",
+              },
+              position: "right",
+              grid: {
+                drawOnChartArea: false,
+              },
+            },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

@@ -13,17 +13,6 @@ const httpTransportSchema = z
   .object({
     type: z.literal("http"),
     url: z.string().url(),
-    headers: z.record(z.string(), z.string()).optional(),
-  })
-  .superRefine((value, ctx) => {
-    if (value.headers && Object.keys(value.headers).length > 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["headers"],
-        message:
-          "HTTP headers are not supported by the current HTTP transport. Remove headers or use stdio.",
-      });
-    }
   })
   .strict();
 

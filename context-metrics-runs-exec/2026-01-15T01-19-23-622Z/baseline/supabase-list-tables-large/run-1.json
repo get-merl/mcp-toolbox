@@ -1,0 +1,52 @@
+{
+  "runId": "d0b5e80d-6f8d-40ba-9338-604e926db41e",
+  "mode": "baseline",
+  "taskId": "supabase-list-tables-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "serverOnly",
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 2274,
+      "completion_tokens": 19,
+      "total_tokens": 2293,
+      "latency_ms": 763,
+      "tool_definitions_count": 20,
+      "tool_definitions_bytes": 9772,
+      "response": "{\"tool_name\":\"supabase.list_tables\",\"arguments\":{\"schemas\":[\"public\"]}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.list_tables",
+        "arguments": {
+          "schemas": [
+            "public"
+          ]
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 2537,
+      "result_bytes_raw": 7939,
+      "result_bytes_filtered": 7939,
+      "filter_applied": null
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 4273,
+      "completion_tokens": 477,
+      "total_tokens": 4750,
+      "latency_ms": 5610,
+      "result_bytes_in_context": 7973,
+      "response": "Public schema has 5 tables, all with RLS enabled and currently showing 0 rows:\n\n1) public.multiplayer_sessions  \n- PK: id (uuid, default gen_random_uuid())  \n- Columns: story_version_id (uuid), host_id (uuid), title (text, nullable), status (enum multiplayer_session_statuses: pending/active/completed, default pending), settings (jsonb default {}), session_state (jsonb default {}), version (int default 0), created_at/updated_at (timestamptz default now at utc)  \n- FKs: story_version_id → public.story_versions.id; host_id → public.users.id\n\n2) public.saves  \n- PK: id (uuid, default gen_random_uuid())  \n- Columns: story_id (uuid), user_id (uuid), save (jsonb), mode (text default 'solo', check: solo|multiplayer), created_at/updated_at (timestamptz)  \n- FKs: story_id → public.stories.id; user_id → public.users.id\n\n3) public.stories  \n- PK: id (uuid, default gen_random_uuid())  \n- Columns: slug (text, unique), title (text), summary (text, nullable), created_by (uuid, nullable), created_at/updated_at (timestamptz)  \n- FKs: created_by → public.users.id\n\n4) public.story_versions  \n- PK: id (uuid, default gen_random_uuid())  \n- Columns: story_id (uuid), version_tag (text, nullable), outline (jsonb), published_at (timestamptz, nullable), status (enum story_version_statuses: draft/published, default draft), component_lock (jsonb default {}), engine_range (text default ^0.1.0), shell (jsonb default {\"key\":\"shell.ebook\"}), theme (text default default), created_at/updated_at (timestamptz)  \n- FKs: story_id → public.stories.id\n\n5) public.users  \n- PK: id (uuid)  \n- Columns: username (text, nullable), avatar_url (text, nullable), created_at/updated_at (timestamptz)  \n- FKs: id → auth.users.id (users_auth_id_fkey)"
+    }
+  ],
+  "total_prompt_tokens": 6547,
+  "total_completion_tokens": 496,
+  "total_tokens": 7043,
+  "result_bytes_raw": 7939,
+  "result_bytes_filtered": 7939,
+  "estimated_cost_usd": 0.027081,
+  "success": true,
+  "error": null
+}

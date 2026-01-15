@@ -1,0 +1,57 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "baseline-50",
+  "taskId": "supabase-list-tables-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "scaledBaseline",
+  "filter_result": false,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 4232,
+      "completion_tokens": 19,
+      "total_tokens": 4251,
+      "latency_ms": 595,
+      "tool_definitions_count": 50,
+      "tool_definitions_bytes": 18213,
+      "response": "{\"tool_name\":\"supabase.list_tables\",\"arguments\":{\"schemas\":[\"public\"]}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.list_tables",
+        "arguments": {
+          "schemas": [
+            "public"
+          ]
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 1954,
+      "result_bytes_raw": 7939,
+      "result_bytes_filtered": 7939,
+      "filter_applied": null
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 6231,
+      "completion_tokens": 363,
+      "total_tokens": 6594,
+      "latency_ms": 4195,
+      "result_bytes_in_context": 7973,
+      "response": "There are **5 tables** in the `public` schema, and **RLS is enabled on all of them** (each currently shows **0 rows**):\n\n- `public.users` — PK: `id`; columns: `id`, `username`, `avatar_url`, `created_at`, `updated_at`.  \n  FKs: `id → auth.users.id` (plus referenced by other tables).\n\n- `public.stories` — PK: `id`; columns: `slug` (unique), `title`, `summary`, `created_by`, `created_at`, `updated_at`.  \n  FK: `created_by → public.users.id`.\n\n- `public.story_versions` — PK: `id`; columns include `story_id`, `outline` (jsonb), `status` enum (`draft|published`), `published_at`, `component_lock` (jsonb), `engine_range`, `shell` (jsonb), `theme`, timestamps.  \n  FK: `story_id → public.stories.id`.\n\n- `public.saves` — PK: `id`; columns: `story_id`, `user_id`, `save` (jsonb), `mode` (check: `solo|multiplayer`), timestamps.  \n  FKs: `story_id → public.stories.id`, `user_id → public.users.id`.\n\n- `public.multiplayer_sessions` — PK: `id`; columns: `story_version_id`, `host_id`, `title`, `status` enum (`pending|active|completed`), `settings` (jsonb), `session_state` (jsonb), `version` (int), timestamps.  \n  FKs: `story_version_id → public.story_versions.id`, `host_id → public.users.id`."
+    }
+  ],
+  "total_prompt_tokens": 10463,
+  "total_completion_tokens": 382,
+  "total_tokens": 10845,
+  "latency_ms": 6745,
+  "result_bytes_raw": 7939,
+  "result_bytes_filtered": 7939,
+  "tool_definitions_count": 50,
+  "tool_definitions_bytes": 18213,
+  "prompt_bytes": 19043,
+  "response_bytes": 1217,
+  "estimated_cost_usd": 0.037119,
+  "success": true
+}

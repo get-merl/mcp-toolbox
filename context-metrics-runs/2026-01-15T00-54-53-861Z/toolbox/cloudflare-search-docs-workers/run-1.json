@@ -1,0 +1,31 @@
+{
+  "runId": "3959210c-6fde-40c8-a752-986542c19b0c",
+  "mode": "toolbox",
+  "taskId": "cloudflare-search-docs-workers",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "taskToolsOnly",
+  "tool_definitions_count": 1,
+  "tool_definitions_bytes": 800,
+  "prompt_bytes": 1625,
+  "prompt_tokens": 382,
+  "completion_tokens": 27,
+  "total_tokens": 409,
+  "latency_ms": 645,
+  "response_bytes": 127,
+  "estimated_cost_usd": 0.001551,
+  "success": true,
+  "response_text": "{\"tool_name\":\"cloudflare-observability.search_cloudflare_documentation\",\"arguments\":{\"query\":\"Workers Durable Objects alarms\"}}",
+  "parsed_tool_call": {
+    "tool_name": "cloudflare-observability.search_cloudflare_documentation",
+    "arguments": {
+      "query": "Workers Durable Objects alarms"
+    }
+  },
+  "expected_tool_call": {
+    "tool_name": "cloudflare-observability.search_cloudflare_documentation",
+    "arguments": {
+      "query": "Workers Durable Objects alarms"
+    }
+  }
+}

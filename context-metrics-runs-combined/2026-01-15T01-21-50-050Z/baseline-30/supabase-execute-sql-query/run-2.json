@@ -1,0 +1,40 @@
+{
+  "runId": "cc63037b-2836-470f-8490-a746a272410d",
+  "mode": "baseline-30",
+  "taskId": "supabase-execute-sql-query",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "scaledBaseline",
+  "filter_result": false,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 3027,
+      "completion_tokens": 27,
+      "total_tokens": 3054,
+      "latency_ms": 749,
+      "tool_definitions_count": 30,
+      "tool_definitions_bytes": 13021,
+      "response": "{\"tool_name\":\"supabase.execute_sql\",\"arguments\":{\"query\":\"select * from your_table_name limit 100;\"}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.execute_sql",
+        "arguments": {
+          "query": "select * from your_table_name limit 100;"
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "error": "Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/supabase/tools/execute_sql.ts",
+      "latency_ms": 0
+    }
+  ],
+  "total_prompt_tokens": 3027,
+  "total_completion_tokens": 27,
+  "total_tokens": 3054,
+  "latency_ms": 0,
+  "error": {
+    "message": "Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/supabase/tools/execute_sql.ts",
+    "stack": "Error: Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/supabase/tools/execute_sql.ts\n    at executeMcpTool (file:///Users/shubhankarsharan/Desktop/mcp-toolbox/scripts/context-metrics-runner-combined.mjs:294:11)\n    at async run (file:///Users/shubhankarsharan/Desktop/mcp-toolbox/scripts/context-metrics-runner-combined.mjs:521:26)"
+  }
+}

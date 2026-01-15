@@ -1,0 +1,55 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "toolbox",
+  "taskId": "supabase-execute-sql-query",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "taskToolsOnly",
+  "filter_result": true,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 271,
+      "completion_tokens": 24,
+      "total_tokens": 295,
+      "latency_ms": 1016,
+      "tool_definitions_count": 1,
+      "tool_definitions_bytes": 407,
+      "response": "{\"tool_name\":\"supabase.execute_sql\",\"arguments\":{\"query\":\"SELECT * FROM your_table_name;\"}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.execute_sql",
+        "arguments": {
+          "query": "SELECT * FROM your_table_name;"
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 1541,
+      "result_bytes_raw": 268,
+      "result_bytes_filtered": 281,
+      "filter_applied": "summarize_array"
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 413,
+      "completion_tokens": 64,
+      "total_tokens": 477,
+      "latency_ms": 1201,
+      "result_bytes_in_context": 323,
+      "response": "The query failed because the table name `your_table_name` doesn’t exist in the database (Postgres error 42P01: relation does not exist). Replace it with the actual table name, or first list available tables (e.g., query `information_schema.tables`) to find the correct name."
+    }
+  ],
+  "total_prompt_tokens": 684,
+  "total_completion_tokens": 88,
+  "total_tokens": 772,
+  "latency_ms": 3758,
+  "result_bytes_raw": 268,
+  "result_bytes_filtered": 281,
+  "tool_definitions_count": 1,
+  "tool_definitions_bytes": 407,
+  "prompt_bytes": 1230,
+  "response_bytes": 276,
+  "estimated_cost_usd": 0.003372,
+  "success": true
+}

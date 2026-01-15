@@ -1,7 +1,7 @@
 mode,taskId,runs,success_rate,total_tokens_min,total_tokens_median,total_tokens_max,prompt_tokens_median,completion_tokens_median,latency_ms_median,prompt_bytes_median,tool_definitions_bytes_median,estimated_cost_usd_median
-"baseline","cloudflare-search-docs-workers",3,1,6419,6419,6419,6392,27,878,25072,24247,0.019581
-"baseline","supabase-get-project-url",3,1,2294,2294,2294,2277,17,724,10570,9772,0.007086
-"baseline","supabase-list-tables-public",3,1,2295,2295,2295,2276,19,609,10570,9772,0.007113
-"toolbox","cloudflare-search-docs-workers",3,1,409,409,409,382,27,717,1625,800,0.001551
-"toolbox","supabase-get-project-url",3,1,234,234,234,217,17,585,955,157,0.000906
-"toolbox","supabase-list-tables-public",3,1,269,269,269,250,19,636,1125,327,0.001035
+"baseline","cloudflare-search-docs-workers",3,1,6419,6419,6419,6392,27,853,25072,24247,0.019581
+"baseline","supabase-get-project-url",3,1,2294,2294,2294,2277,17,797,10570,9772,0.007086
+"baseline","supabase-list-tables-public",3,1,2295,2295,2295,2276,19,767,10570,9772,0.007113
+"toolbox","cloudflare-search-docs-workers",3,1,409,409,409,382,27,645,1625,800,0.001551
+"toolbox","supabase-get-project-url",3,1,234,234,234,217,17,591,955,157,0.000906
+"toolbox","supabase-list-tables-public",3,1,269,269,269,250,19,611,1125,327,0.001035

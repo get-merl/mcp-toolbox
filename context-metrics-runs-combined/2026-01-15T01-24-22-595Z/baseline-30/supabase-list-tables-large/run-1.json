@@ -1,0 +1,57 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "baseline-30",
+  "taskId": "supabase-list-tables-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "scaledBaseline",
+  "filter_result": false,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 3028,
+      "completion_tokens": 19,
+      "total_tokens": 3047,
+      "latency_ms": 498,
+      "tool_definitions_count": 30,
+      "tool_definitions_bytes": 13021,
+      "response": "{\"tool_name\":\"supabase.list_tables\",\"arguments\":{\"schemas\":[\"public\"]}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.list_tables",
+        "arguments": {
+          "schemas": [
+            "public"
+          ]
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 1657,
+      "result_bytes_raw": 7939,
+      "result_bytes_filtered": 7939,
+      "filter_applied": null
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 5027,
+      "completion_tokens": 416,
+      "total_tokens": 5443,
+      "latency_ms": 5051,
+      "result_bytes_in_context": 7973,
+      "response": "Public schema has 5 tables, all with RLS enabled and currently 0 rows:\n\n- `users` (PK: `id` uuid; FK: `users.id` → `auth.users.id`). Columns: `id`, `username` (nullable), `avatar_url` (nullable), `created_at`/`updated_at` (timestamptz, default `timezone('utc', now())`).\n- `stories` (PK: `id` uuid default `gen_random_uuid()`; unique `slug`; FK: `created_by` → `users.id`). Columns: `slug`, `title`, `summary` (nullable), `created_by` (nullable), timestamps.\n- `story_versions` (PK: `id` uuid default `gen_random_uuid()`; FK: `story_id` → `stories.id`). Columns include `outline` jsonb, `status` enum `draft|published` (default `draft`), `published_at` (nullable), `component_lock` jsonb default `{}`, `engine_range` default `^0.1.0`, `shell` jsonb default `{\"key\":\"shell.ebook\"}`, `theme` default `default`, timestamps.\n- `saves` (PK: `id` uuid default `gen_random_uuid()`; FKs: `story_id` → `stories.id`, `user_id` → `users.id`). Columns: `save` jsonb, `mode` text default `solo` with check `mode in ('solo','multiplayer')`, timestamps.\n- `multiplayer_sessions` (PK: `id` uuid default `gen_random_uuid()`; FKs: `story_version_id` → `story_versions.id`, `host_id` → `users.id`). Columns: `title` (nullable), `status` enum `pending|active|completed` (default `pending`), `settings` jsonb default `{}`, `session_state` jsonb default `{}`, `version` int default `0`, timestamps."
+    }
+  ],
+  "total_prompt_tokens": 8055,
+  "total_completion_tokens": 435,
+  "total_tokens": 8490,
+  "latency_ms": 7206,
+  "result_bytes_raw": 7939,
+  "result_bytes_filtered": 7939,
+  "tool_definitions_count": 30,
+  "tool_definitions_bytes": 13021,
+  "prompt_bytes": 13851,
+  "response_bytes": 1390,
+  "estimated_cost_usd": 0.03069,
+  "success": true
+}

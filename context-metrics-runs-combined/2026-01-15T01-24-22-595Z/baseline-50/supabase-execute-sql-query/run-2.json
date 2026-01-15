@@ -1,0 +1,55 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "baseline-50",
+  "taskId": "supabase-execute-sql-query",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "scaledBaseline",
+  "filter_result": false,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 4231,
+      "completion_tokens": 29,
+      "total_tokens": 4260,
+      "latency_ms": 1310,
+      "tool_definitions_count": 50,
+      "tool_definitions_bytes": 18213,
+      "response": "{\"tool_name\":\"supabase.execute_sql\",\"arguments\":{\"query\":\"select * from public.your_table_name limit 100;\"}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.execute_sql",
+        "arguments": {
+          "query": "select * from public.your_table_name limit 100;"
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 1516,
+      "result_bytes_raw": 292,
+      "result_bytes_filtered": 292,
+      "filter_applied": null
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 4377,
+      "completion_tokens": 72,
+      "total_tokens": 4449,
+      "latency_ms": 2172,
+      "result_bytes_in_context": 330,
+      "response": "The query failed because `public.your_table_name` is just a placeholder and no such table exists in your database (`ERROR 42P01: relation does not exist`). List the actual tables (e.g., via `supabase.list_tables`) and then rerun `SELECT * FROM public.<real_table_name> LIMIT 100;`."
+    }
+  ],
+  "total_prompt_tokens": 8608,
+  "total_completion_tokens": 101,
+  "total_tokens": 8709,
+  "latency_ms": 4998,
+  "result_bytes_raw": 292,
+  "result_bytes_filtered": 292,
+  "tool_definitions_count": 50,
+  "tool_definitions_bytes": 18213,
+  "prompt_bytes": 19036,
+  "response_bytes": 281,
+  "estimated_cost_usd": 0.027339,
+  "success": true
+}

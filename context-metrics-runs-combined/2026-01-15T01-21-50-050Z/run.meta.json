@@ -1,0 +1,24 @@
+{
+  "runId": "cc63037b-2836-470f-8490-a746a272410d",
+  "createdAt": "2026-01-15T01:22:24.627Z",
+  "modes": [
+    "toolbox",
+    "baseline-30",
+    "baseline-50",
+    "baseline-100",
+    "baseline-200",
+    "baseline-500"
+  ],
+  "tasks": [
+    "supabase-list-tables-large",
+    "supabase-execute-sql-query",
+    "cloudflare-workers-list-large"
+  ],
+  "provider": {
+    "kind": "openai",
+    "model": "gpt-5.2",
+    "apiKeyEnv": "OPENAI_API_KEY"
+  },
+  "runsPerTask": 2,
+  "type": "combined"
+}

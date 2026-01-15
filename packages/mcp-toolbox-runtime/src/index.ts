@@ -1,15 +1,12 @@
 import { Client } from "@modelcontextprotocol/sdk/client";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import type { ToolboxConfig } from "./config.js";
-import { defaultConfigPath } from "./paths.js";
-import { loadToolboxConfig, fileExists } from "./loadConfig.js";
+import { loadToolboxConfig } from "./loadConfig.js";
 import { buildStdioEnv } from "./env.js";
+import { getOrCreatePool, closeAllPools, closePool, getPoolStats } from "./connectionPool.js";
 
 type CallArgs = { serverName: string; toolName: string; input: unknown };
-
-const clientCache = new Map<string, { client: Client; transport: Transport }>();
 
 export async function callMcpTool<T = unknown>(args: CallArgs): Promise<T> {
   const config = await loadConfigForRuntime();
@@ -17,35 +14,32 @@ export async function callMcpTool<T = unknown>(args: CallArgs): Promise<T> {
   if (!serverCfg)
     throw new Error(`mcp-toolbox: server not configured: ${args.serverName}`);
 
-  const cacheKey = args.serverName;
-  let cached = clientCache.get(cacheKey);
-  if (!cached) {
+  const pool = getOrCreatePool(args.serverName, async () => {
     const transport = await chooseTransportRuntime(config, serverCfg);
     const client = new Client({
       name: config.client?.name || "mcp-toolbox-runtime",
       version: config.client?.version || "0.1.0",
     });
     await client.connect(transport);
-    cached = { client, transport };
-    clientCache.set(cacheKey, cached);
-  }
+    return { client, transport };
+  });
 
-  const res = await cached.client.callTool({
-    name: args.toolName,
-    arguments: args.input as any,
-  } as any);
-  return res as unknown as T;
+  const resource = await pool.acquire();
+  try {
+    const res = await resource.client.callTool({
+      name: args.toolName,
+      arguments: args.input as Record<string, unknown>,
+    });
+    return res as unknown as T;
+  } finally {
+    pool.release(resource);
+  }
 }
 
 async function loadConfigForRuntime(): Promise<ToolboxConfig> {
   const explicit = process.env["MCP_TOOLBOX_CONFIG"];
-  const configPath = explicit ? explicit : defaultConfigPath();
-  if (!(await fileExists(configPath))) {
-    throw new Error(
-      `mcp-toolbox: config not found at ${configPath}. Set MCP_TOOLBOX_CONFIG or create mcp-toolbox.config.json`
-    );
-  }
-  return await loadToolboxConfig(configPath);
+  // Use cosmiconfig's auto-search when no explicit config is provided
+  return await loadToolboxConfig(explicit || undefined);
 }
 
 async function chooseTransportRuntime(
@@ -82,10 +76,32 @@ async function chooseTransportRuntime(
   throw new Error(`mcp-toolbox: unknown transport type for ${serverCfg.name}`);
 }
 
+// Graceful shutdown handlers
+let shutdownRegistered = false;
+function registerShutdownHandlers() {
+  if (shutdownRegistered) return;
+  shutdownRegistered = true;
+  
+  const shutdown = async () => {
+    await closeAllPools();
+    process.exit(0);
+  };
+
+  process.on("beforeExit", closeAllPools);
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
+}
+
+// Register shutdown handlers on module load
+registerShutdownHandlers();
+
 // Export types for users
 export type { ToolboxConfig, ToolboxServerConfig } from "./config.js";
 
 // Export shared utilities used by CLI
 export { defaultConfigPath, defaultOutDir, resolveFromCwd } from "./paths.js";
-export { loadToolboxConfig, fileExists } from "./loadConfig.js";
+export { loadToolboxConfig, loadToolboxConfigWithPath, fileExists, clearConfigCache } from "./loadConfig.js";
 export { buildStdioEnv } from "./env.js";
+
+// Export connection pool control methods
+export { closePool as closeConnection, closeAllPools as closeAllConnections, getPoolStats } from "./connectionPool.js";

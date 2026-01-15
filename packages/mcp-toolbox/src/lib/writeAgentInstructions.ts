@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { fileExists } from "mcp-toolbox-runtime";
+import { fileExists } from "@merl-ai/mcp-toolbox-runtime";
 
 export async function writeAgentInstructions(
   projectRoot: string,

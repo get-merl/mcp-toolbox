@@ -34,7 +34,7 @@ jobs:
 
       - name: Run sync
         env:
-          MCP_TOOLBOX_CONFIG: mcp-toolbox.config.ts
+          MCP_TOOLBOX_CONFIG: mcp-toolbox.config.json
         run: node packages/mcp-toolbox/dist/bin.js sync --yes --no-format
 
       - name: Create PR if changes

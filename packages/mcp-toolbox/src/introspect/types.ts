@@ -2,6 +2,7 @@ export type McpToolDefinition = {
   name: string;
   description?: string;
   inputSchema?: unknown;
+  outputSchema?: unknown;
 };
 
 export type McpToolsListResult = {

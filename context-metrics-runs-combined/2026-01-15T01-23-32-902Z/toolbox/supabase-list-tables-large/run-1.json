@@ -1,0 +1,57 @@
+{
+  "runId": "be75e918-eb42-4fa2-b499-19c6fff8c913",
+  "mode": "toolbox",
+  "taskId": "supabase-list-tables-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "taskToolsOnly",
+  "filter_result": true,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 255,
+      "completion_tokens": 19,
+      "total_tokens": 274,
+      "latency_ms": 794,
+      "tool_definitions_count": 1,
+      "tool_definitions_bytes": 327,
+      "response": "{\"tool_name\":\"supabase.list_tables\",\"arguments\":{\"schemas\":[\"public\"]}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.list_tables",
+        "arguments": {
+          "schemas": [
+            "public"
+          ]
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 2531,
+      "result_bytes_raw": 7939,
+      "result_bytes_filtered": 7967,
+      "filter_applied": "summarize_array"
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 2269,
+      "completion_tokens": 500,
+      "total_tokens": 2769,
+      "latency_ms": 5442,
+      "result_bytes_in_context": 8009,
+      "response": ""
+    }
+  ],
+  "total_prompt_tokens": 2524,
+  "total_completion_tokens": 519,
+  "total_tokens": 3043,
+  "latency_ms": 8768,
+  "result_bytes_raw": 7939,
+  "result_bytes_filtered": 7967,
+  "tool_definitions_count": 1,
+  "tool_definitions_bytes": 327,
+  "prompt_bytes": 1157,
+  "response_bytes": 0,
+  "estimated_cost_usd": 0.015357,
+  "success": true
+}

@@ -1,0 +1,42 @@
+{
+  "runId": "cc63037b-2836-470f-8490-a746a272410d",
+  "mode": "toolbox",
+  "taskId": "supabase-list-tables-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "taskToolsOnly",
+  "filter_result": true,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 255,
+      "completion_tokens": 19,
+      "total_tokens": 274,
+      "latency_ms": 634,
+      "tool_definitions_count": 1,
+      "tool_definitions_bytes": 327,
+      "response": "{\"tool_name\":\"supabase.list_tables\",\"arguments\":{\"schemas\":[\"public\"]}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.list_tables",
+        "arguments": {
+          "schemas": [
+            "public"
+          ]
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "error": "Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/supabase/tools/list_tables.ts",
+      "latency_ms": 1
+    }
+  ],
+  "total_prompt_tokens": 255,
+  "total_completion_tokens": 19,
+  "total_tokens": 274,
+  "latency_ms": 0,
+  "error": {
+    "message": "Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/supabase/tools/list_tables.ts",
+    "stack": "Error: Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/supabase/tools/list_tables.ts\n    at executeMcpTool (file:///Users/shubhankarsharan/Desktop/mcp-toolbox/scripts/context-metrics-runner-combined.mjs:294:11)\n    at async run (file:///Users/shubhankarsharan/Desktop/mcp-toolbox/scripts/context-metrics-runner-combined.mjs:521:26)"
+  }
+}

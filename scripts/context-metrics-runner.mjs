@@ -300,6 +300,36 @@ async function buildToolSet({ mode, task, snapshotsDir, syntheticToolsPath }) {
     return [...taskTools, ...padding];
   }
 
+  if (mode.toolDefinitionScope === "scaledBaseline") {
+    // Baseline scaling: include ALL server tools (not just task tools) up to target count
+    // Cycle through available tools if target count exceeds available tools
+    const targetCount = mode.toolCount || 100;
+    const realTools = await loadSnapshotTools({
+      snapshotsDir,
+      serverSlug: task.serverSlug,
+    });
+    const syntheticTools = syntheticToolsPath ? await loadSyntheticTools(syntheticToolsPath) : [];
+    const allTools = [...realTools, ...syntheticTools];
+    
+    if (allTools.length === 0) {
+      return [];
+    }
+    
+    // If we need more tools than available, cycle through them
+    if (targetCount <= allTools.length) {
+      return allTools.slice(0, targetCount);
+    }
+    
+    // Cycle through tools to reach target count
+    const result = [];
+    for (let i = 0; i < targetCount; i++) {
+      // Clone the tool to avoid reference issues, and mark it with a unique index
+      const tool = allTools[i % allTools.length];
+      result.push({ ...tool, __cycleIndex: i });
+    }
+    return result;
+  }
+
   throw new Error(`Unknown toolDefinitionScope: ${mode.toolDefinitionScope}`);
 }
 

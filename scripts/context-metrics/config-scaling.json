@@ -15,28 +15,63 @@
   "outputDir": "context-metrics-runs-scaling",
   "modes": [
     {
-      "name": "toolbox-1",
+      "name": "toolbox",
       "toolDefinitionScope": "taskToolsOnly"
     },
     {
-      "name": "scaled-30",
-      "toolDefinitionScope": "scaled",
+      "name": "baseline-30",
+      "toolDefinitionScope": "scaledBaseline",
       "toolCount": 30
     },
     {
-      "name": "scaled-50",
-      "toolDefinitionScope": "scaled",
+      "name": "baseline-50",
+      "toolDefinitionScope": "scaledBaseline",
       "toolCount": 50
     },
     {
-      "name": "scaled-100",
-      "toolDefinitionScope": "scaled",
+      "name": "baseline-100",
+      "toolDefinitionScope": "scaledBaseline",
       "toolCount": 100
     },
     {
-      "name": "scaled-150",
-      "toolDefinitionScope": "scaled",
+      "name": "baseline-150",
+      "toolDefinitionScope": "scaledBaseline",
       "toolCount": 150
+    },
+    {
+      "name": "baseline-200",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 200
+    },
+    {
+      "name": "baseline-500",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 500
+    },
+    {
+      "name": "baseline-1000",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 1000
+    },
+    {
+      "name": "baseline-2000",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 2000
+    },
+    {
+      "name": "baseline-5000",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 5000
+    },
+    {
+      "name": "baseline-10000",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 10000
+    },
+    {
+      "name": "baseline-20000",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 20000
     }
   ],
   "prompt": {

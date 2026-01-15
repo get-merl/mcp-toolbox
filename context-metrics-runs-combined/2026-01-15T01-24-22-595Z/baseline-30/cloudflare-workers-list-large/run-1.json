@@ -1,0 +1,53 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "baseline-30",
+  "taskId": "cloudflare-workers-list-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "scaledBaseline",
+  "filter_result": false,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 7756,
+      "completion_tokens": 20,
+      "total_tokens": 7776,
+      "latency_ms": 1537,
+      "tool_definitions_count": 30,
+      "tool_definitions_bytes": 30153,
+      "response": "{\"tool_name\":\"cloudflare-observability.workers_list\",\"arguments\":{}}",
+      "parsed_tool_call": {
+        "tool_name": "cloudflare-observability.workers_list",
+        "arguments": {}
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 3327,
+      "result_bytes_raw": 167,
+      "result_bytes_filtered": 167,
+      "filter_applied": null
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 7848,
+      "completion_tokens": 68,
+      "total_tokens": 7916,
+      "latency_ms": 1468,
+      "result_bytes_in_context": 201,
+      "response": "You don’t have an active Cloudflare account selected, so I can’t list Workers yet. Next steps: run `cloudflare-observability.accounts_list`, then call `cloudflare-observability.set_active_account` with the desired `accountId`, and then re-run `cloudflare-observability.workers_list`."
+    }
+  ],
+  "total_prompt_tokens": 15604,
+  "total_completion_tokens": 88,
+  "total_tokens": 15692,
+  "latency_ms": 6332,
+  "result_bytes_raw": 167,
+  "result_bytes_filtered": 167,
+  "tool_definitions_count": 30,
+  "tool_definitions_bytes": 30153,
+  "prompt_bytes": 30966,
+  "response_bytes": 287,
+  "estimated_cost_usd": 0.048132,
+  "success": true
+}

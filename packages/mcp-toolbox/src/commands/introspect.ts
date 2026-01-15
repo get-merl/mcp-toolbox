@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { spinner, outro } from "@clack/prompts";
-import { defaultConfigPath, loadToolboxConfig } from "mcp-toolbox-runtime";
+import { defaultConfigPath, loadToolboxConfig } from "@merl-ai/mcp-toolbox-runtime";
 import { slugifyServerName } from "../lib/slug.js";
 import { introspectServer } from "../introspect/introspectServer.js";
 import { writeLatestSnapshot } from "../snapshot/writeSnapshot.js";

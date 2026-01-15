@@ -1,0 +1,53 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "toolbox",
+  "taskId": "cloudflare-workers-list-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "taskToolsOnly",
+  "filter_result": true,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 252,
+      "completion_tokens": 20,
+      "total_tokens": 272,
+      "latency_ms": 674,
+      "tool_definitions_count": 1,
+      "tool_definitions_bytes": 305,
+      "response": "{\"tool_name\":\"cloudflare-observability.workers_list\",\"arguments\":{}}",
+      "parsed_tool_call": {
+        "tool_name": "cloudflare-observability.workers_list",
+        "arguments": {}
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 2706,
+      "result_bytes_raw": 167,
+      "result_bytes_filtered": 195,
+      "filter_applied": "summarize_array"
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 359,
+      "completion_tokens": 48,
+      "total_tokens": 407,
+      "latency_ms": 1521,
+      "result_bytes_in_context": 237,
+      "response": "No Workers could be listed because there’s no active `accountId` set. First list your Cloudflare accounts (`accounts_list`), then set the active account (`set_active_account`), and rerun the Workers list."
+    }
+  ],
+  "total_prompt_tokens": 611,
+  "total_completion_tokens": 68,
+  "total_tokens": 679,
+  "latency_ms": 4901,
+  "result_bytes_raw": 167,
+  "result_bytes_filtered": 195,
+  "tool_definitions_count": 1,
+  "tool_definitions_bytes": 305,
+  "prompt_bytes": 1118,
+  "response_bytes": 206,
+  "estimated_cost_usd": 0.002853,
+  "success": true
+}

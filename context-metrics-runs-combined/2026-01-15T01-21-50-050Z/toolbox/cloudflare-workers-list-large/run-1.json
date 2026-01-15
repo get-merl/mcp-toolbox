@@ -1,0 +1,38 @@
+{
+  "runId": "cc63037b-2836-470f-8490-a746a272410d",
+  "mode": "toolbox",
+  "taskId": "cloudflare-workers-list-large",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "taskToolsOnly",
+  "filter_result": true,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 252,
+      "completion_tokens": 20,
+      "total_tokens": 272,
+      "latency_ms": 642,
+      "tool_definitions_count": 1,
+      "tool_definitions_bytes": 305,
+      "response": "{\"tool_name\":\"cloudflare-observability.workers_list\",\"arguments\":{}}",
+      "parsed_tool_call": {
+        "tool_name": "cloudflare-observability.workers_list",
+        "arguments": {}
+      }
+    },
+    {
+      "step": "tool_execution",
+      "error": "Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/cloudflare-observability/tools/workers_list.ts",
+      "latency_ms": 0
+    }
+  ],
+  "total_prompt_tokens": 252,
+  "total_completion_tokens": 20,
+  "total_tokens": 272,
+  "latency_ms": 0,
+  "error": {
+    "message": "Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/cloudflare-observability/tools/workers_list.ts",
+    "stack": "Error: Tool not found: /Users/shubhankarsharan/Desktop/mcp-toolbox/toolbox/servers/cloudflare-observability/tools/workers_list.ts\n    at executeMcpTool (file:///Users/shubhankarsharan/Desktop/mcp-toolbox/scripts/context-metrics-runner-combined.mjs:294:11)\n    at async run (file:///Users/shubhankarsharan/Desktop/mcp-toolbox/scripts/context-metrics-runner-combined.mjs:521:26)"
+  }
+}

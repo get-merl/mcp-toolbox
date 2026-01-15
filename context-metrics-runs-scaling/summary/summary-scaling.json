@@ -1,0 +1,189 @@
+[
+  {
+    "mode": "baseline-10000",
+    "runs": 6,
+    "success_rate": 0,
+    "tool_count_median": null,
+    "tool_definitions_bytes_median": null,
+    "total_tokens_median": null,
+    "prompt_bytes_median": null,
+    "latency_ms_median": null,
+    "estimated_cost_usd_median": null
+  },
+  {
+    "mode": "baseline-2000",
+    "runs": 6,
+    "success_rate": 0,
+    "tool_count_median": null,
+    "tool_definitions_bytes_median": null,
+    "total_tokens_median": null,
+    "prompt_bytes_median": null,
+    "latency_ms_median": null,
+    "estimated_cost_usd_median": null
+  },
+  {
+    "mode": "baseline-20000",
+    "runs": 6,
+    "success_rate": 0,
+    "tool_count_median": null,
+    "tool_definitions_bytes_median": null,
+    "total_tokens_median": null,
+    "prompt_bytes_median": null,
+    "latency_ms_median": null,
+    "estimated_cost_usd_median": null
+  },
+  {
+    "mode": "baseline-5000",
+    "runs": 6,
+    "success_rate": 0,
+    "tool_count_median": null,
+    "tool_definitions_bytes_median": null,
+    "total_tokens_median": null,
+    "prompt_bytes_median": null,
+    "latency_ms_median": null,
+    "estimated_cost_usd_median": null
+  },
+  {
+    "mode": "toolbox-1",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 1,
+    "tool_definitions_bytes_median": 327,
+    "total_tokens_median": 269,
+    "prompt_bytes_median": 1125,
+    "latency_ms_median": 747.5,
+    "estimated_cost_usd_median": 0.001035
+  },
+  {
+    "mode": "toolbox",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 1,
+    "tool_definitions_bytes_median": 327,
+    "total_tokens_median": 269,
+    "prompt_bytes_median": 1125,
+    "latency_ms_median": 801.5,
+    "estimated_cost_usd_median": 0.001035
+  },
+  {
+    "mode": "scaled-30",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 30,
+    "tool_definitions_bytes_median": 13021,
+    "total_tokens_median": 3042,
+    "prompt_bytes_median": 13819,
+    "latency_ms_median": 667,
+    "estimated_cost_usd_median": 0.009354
+  },
+  {
+    "mode": "baseline-30",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 30,
+    "tool_definitions_bytes_median": 13021,
+    "total_tokens_median": 3042,
+    "prompt_bytes_median": 13819,
+    "latency_ms_median": 715.5,
+    "estimated_cost_usd_median": 0.009354
+  },
+  {
+    "mode": "scaled-50",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 50,
+    "tool_definitions_bytes_median": 18213,
+    "total_tokens_median": 4246,
+    "prompt_bytes_median": 19011,
+    "latency_ms_median": 690.5,
+    "estimated_cost_usd_median": 0.012966
+  },
+  {
+    "mode": "baseline-50",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 50,
+    "tool_definitions_bytes_median": 18213,
+    "total_tokens_median": 4246,
+    "prompt_bytes_median": 19011,
+    "latency_ms_median": 709.5,
+    "estimated_cost_usd_median": 0.012966
+  },
+  {
+    "mode": "scaled-100",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 100,
+    "tool_definitions_bytes_median": 33711,
+    "total_tokens_median": 7713,
+    "prompt_bytes_median": 34509,
+    "latency_ms_median": 921,
+    "estimated_cost_usd_median": 0.023343
+  },
+  {
+    "mode": "baseline-100",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 100,
+    "tool_definitions_bytes_median": 33691,
+    "total_tokens_median": 7713,
+    "prompt_bytes_median": 34489,
+    "latency_ms_median": 707,
+    "estimated_cost_usd_median": 0.023367
+  },
+  {
+    "mode": "scaled-150",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 150,
+    "tool_definitions_bytes_median": 49317,
+    "total_tokens_median": 11255,
+    "prompt_bytes_median": 50115,
+    "latency_ms_median": 959.5,
+    "estimated_cost_usd_median": 0.033969
+  },
+  {
+    "mode": "baseline-150",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 150,
+    "tool_definitions_bytes_median": 49135,
+    "total_tokens_median": 11216,
+    "prompt_bytes_median": 49933,
+    "latency_ms_median": 781,
+    "estimated_cost_usd_median": 0.033876
+  },
+  {
+    "mode": "baseline-200",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 200,
+    "tool_definitions_bytes_median": 66478,
+    "total_tokens_median": 15037,
+    "prompt_bytes_median": 67276,
+    "latency_ms_median": 959.5,
+    "estimated_cost_usd_median": 0.045339
+  },
+  {
+    "mode": "baseline-500",
+    "runs": 6,
+    "success_rate": 1,
+    "tool_count_median": 500,
+    "tool_definitions_bytes_median": 159978,
+    "total_tokens_median": 36101,
+    "prompt_bytes_median": 160776,
+    "latency_ms_median": 1525.5,
+    "estimated_cost_usd_median": 0.108531
+  },
+  {
+    "mode": "baseline-1000",
+    "runs": 6,
+    "success_rate": 0.333,
+    "tool_count_median": 1000,
+    "tool_definitions_bytes_median": 317221,
+    "total_tokens_median": 71422,
+    "prompt_bytes_median": 318019,
+    "latency_ms_median": 1440,
+    "estimated_cost_usd_median": 0.21447
+  }
+]

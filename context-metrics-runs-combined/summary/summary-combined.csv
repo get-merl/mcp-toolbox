@@ -1,0 +1,7 @@
+mode,runs,success_rate,tool_count_median,tool_definitions_bytes_median,total_tokens_median,result_bytes_raw_median,result_bytes_filtered_median,result_bytes_in_context_median,estimated_cost_usd_median
+"toolbox",12,1,1,327,772.5,268,281,323,0.0033794999999999997
+"baseline-30",6,1,30,13021,8532,287,287,325,0.03132
+"baseline-50",6,1,50,18213,10881,287,287,325,0.037659
+"baseline-100",6,1,100,33691,17824.5,282,282,320,0.0586035
+"baseline-200",6,1,200,66478,32479.5,287.5,287.5,325.5,0.10265250000000001
+"baseline-500",6,1,500,159978,74581.5,282,282,320,0.22864649999999997

@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-import { callMcpTool } from "mcp-toolbox-runtime";
+import { callMcpTool } from "@merl-ai/mcp-toolbox-runtime";
 import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
 

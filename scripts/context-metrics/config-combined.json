@@ -1,0 +1,58 @@
+{
+  "provider": {
+    "kind": "openai",
+    "model": "gpt-5.2",
+    "apiKeyEnv": "OPENAI_API_KEY"
+  },
+  "pricing": {
+    "input_per_1m": 3.0,
+    "output_per_1m": 15.0
+  },
+  "runsPerTask": 2,
+  "tasksFile": "scripts/context-metrics/combined-tasks.json",
+  "snapshotsDir": "toolbox/.snapshots",
+  "syntheticToolsFile": "scripts/context-metrics/synthetic-tools.json",
+  "toolboxDir": "toolbox",
+  "outputDir": "context-metrics-runs-combined",
+  "modes": [
+    {
+      "name": "toolbox",
+      "toolDefinitionScope": "taskToolsOnly",
+      "filterResult": true
+    },
+    {
+      "name": "baseline-30",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 30,
+      "filterResult": false
+    },
+    {
+      "name": "baseline-50",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 50,
+      "filterResult": false
+    },
+    {
+      "name": "baseline-100",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 100,
+      "filterResult": false
+    },
+    {
+      "name": "baseline-200",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 200,
+      "filterResult": false
+    },
+    {
+      "name": "baseline-500",
+      "toolDefinitionScope": "scaledBaseline",
+      "toolCount": 500,
+      "filterResult": false
+    }
+  ],
+  "prompt": {
+    "system": "You are a tool-using assistant. Available tools are listed below. When asked to perform a task, output a JSON object with keys tool_name and arguments to call the appropriate tool.",
+    "userSuffix": "Choose the best tool for the task and provide arguments."
+  }
+}

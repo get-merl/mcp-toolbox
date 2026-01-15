@@ -1,2 +1,2 @@
-export type { ToolboxConfig, ToolboxServerConfig } from "mcp-toolbox-runtime";
+export type { ToolboxConfig, ToolboxServerConfig } from "@merl-ai/mcp-toolbox-runtime";
 

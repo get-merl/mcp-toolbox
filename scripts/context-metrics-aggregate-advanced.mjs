@@ -178,19 +178,44 @@ async function aggregateScaling(inputDir, summaryDir) {
   mdLines.push("");
   mdLines.push("## Scaling Analysis");
   mdLines.push("");
+  mdLines.push("### Baseline vs Toolbox Comparison");
+  mdLines.push("");
 
-  const toolboxRow = rows.find((r) => r.mode === "toolbox-1");
-  const scaledRows = rows.filter((r) => r.mode.startsWith("scaled-"));
+  const toolboxRow = rows.find((r) => r.mode === "toolbox");
+  const baselineRows = rows.filter((r) => r.mode.startsWith("baseline-"));
 
-  if (toolboxRow && scaledRows.length > 0) {
-    mdLines.push("| Tool Count | Tokens vs Toolbox | Bytes vs Toolbox | Cost vs Toolbox |");
-    mdLines.push("| --- | --- | --- | --- |");
+  if (toolboxRow && baselineRows.length > 0) {
+    mdLines.push("| Tool Count | Baseline Tokens | Toolbox Tokens | Tokens Saved | Baseline Bytes | Toolbox Bytes | Bytes Saved |");
+    mdLines.push("| --- | --- | --- | --- | --- | --- | --- |");
 
-    for (const scaled of scaledRows) {
-      const tokensDelta = formatDelta(pctDelta(toolboxRow.total_tokens_median, scaled.total_tokens_median));
-      const bytesDelta = formatDelta(pctDelta(toolboxRow.tool_definitions_bytes_median, scaled.tool_definitions_bytes_median));
-      const costDelta = formatDelta(pctDelta(toolboxRow.estimated_cost_usd_median, scaled.estimated_cost_usd_median));
-      mdLines.push(`| ${scaled.tool_count_median} | ${tokensDelta} | ${bytesDelta} | ${costDelta} |`);
+    for (const baseline of baselineRows) {
+      const tokensSaved = formatDelta(pctDelta(baseline.total_tokens_median, toolboxRow.total_tokens_median));
+      const bytesSaved = formatDelta(pctDelta(baseline.tool_definitions_bytes_median, toolboxRow.tool_definitions_bytes_median));
+      mdLines.push(
+        `| ${baseline.tool_count_median} | ${baseline.total_tokens_median ?? ""} | ${toolboxRow.total_tokens_median ?? ""} | ${tokensSaved} | ${baseline.tool_definitions_bytes_median ?? ""} | ${toolboxRow.tool_definitions_bytes_median ?? ""} | ${bytesSaved} |`,
+      );
+    }
+  }
+
+  mdLines.push("");
+  mdLines.push("### Baseline Growth Trend");
+  mdLines.push("");
+
+  if (baselineRows.length > 0) {
+    mdLines.push("| Tool Count | Tokens | Bytes | Cost | Growth vs 30 tools |");
+    mdLines.push("| --- | --- | --- | --- | --- |");
+
+    const baseline30 = baselineRows.find((r) => r.tool_count_median === 30);
+    for (const baseline of baselineRows) {
+      const growthTokens = baseline30
+        ? formatDelta(pctDelta(baseline30.total_tokens_median, baseline.total_tokens_median))
+        : "";
+      const growthBytes = baseline30
+        ? formatDelta(pctDelta(baseline30.tool_definitions_bytes_median, baseline.tool_definitions_bytes_median))
+        : "";
+      mdLines.push(
+        `| ${baseline.tool_count_median} | ${baseline.total_tokens_median ?? ""} | ${baseline.tool_definitions_bytes_median ?? ""} | ${baseline.estimated_cost_usd_median ?? ""} | ${growthTokens} tokens, ${growthBytes} bytes |`,
+      );
     }
   }
 
@@ -402,6 +427,121 @@ async function aggregateWorkflow(inputDir, summaryDir) {
   console.log(`Workflow summary written to ${summaryDir}`);
 }
 
+async function aggregateCombined(inputDir, summaryDir) {
+  const recentDirs = await findMostRecentRunDirs(inputDir);
+  const recentDirSet = new Set(recentDirs);
+
+  const files = await listFilesRecursively(inputDir);
+  const logs = [];
+  for (const file of files) {
+    if (file.includes(`${path.sep}summary${path.sep}`)) continue;
+    if (file.endsWith("run.meta.json")) continue;
+    const fileDir = path.dirname(file);
+    const parts = fileDir.split(path.sep);
+    const timestampDir = parts.find((p) => p.match(/^\d{4}-\d{2}-\d{2}T/));
+    if (!timestampDir || !recentDirSet.has(timestampDir)) continue;
+    const log = await readJson(file);
+    if (!log || !log.mode || !log.taskId) continue;
+    logs.push(log);
+  }
+
+  // Group by mode
+  const groups = new Map();
+  for (const log of logs) {
+    const key = log.mode;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(log);
+  }
+
+  const rows = [];
+  for (const [mode, group] of groups.entries()) {
+    const toolCounts = group.map((g) => g.tool_definitions_count).filter((v) => typeof v === "number");
+    const toolBytes = group.map((g) => g.tool_definitions_bytes).filter((v) => typeof v === "number");
+    const tokens = group.map((g) => g.total_tokens).filter((v) => typeof v === "number");
+    const rawResultBytes = group.map((g) => g.result_bytes_raw).filter((v) => typeof v === "number");
+    const filteredResultBytes = group.map((g) => g.result_bytes_filtered).filter((v) => typeof v === "number");
+    const resultBytesInContext = group
+      .flatMap((g) => g.steps || [])
+      .filter((s) => s.step === "result_processing")
+      .map((s) => s.result_bytes_in_context)
+      .filter((v) => typeof v === "number");
+    const cost = group.map((g) => g.estimated_cost_usd).filter((v) => typeof v === "number");
+    const successRate = group.filter((g) => g.success).length / Math.max(group.length, 1);
+
+    rows.push({
+      mode,
+      runs: group.length,
+      success_rate: Number(successRate.toFixed(3)),
+      tool_count_median: summarize(toolCounts).median,
+      tool_definitions_bytes_median: summarize(toolBytes).median,
+      total_tokens_median: summarize(tokens).median,
+      result_bytes_raw_median: summarize(rawResultBytes).median,
+      result_bytes_filtered_median: summarize(filteredResultBytes).median,
+      result_bytes_in_context_median: summarize(resultBytesInContext).median,
+      estimated_cost_usd_median: summarize(cost).median,
+    });
+  }
+
+  // Sort by tool count
+  rows.sort((a, b) => (a.tool_count_median || 0) - (b.tool_count_median || 0));
+
+  const summaryJsonPath = path.join(summaryDir, "summary-combined.json");
+  const summaryCsvPath = path.join(summaryDir, "summary-combined.csv");
+  const summaryMdPath = path.join(summaryDir, "summary-combined.md");
+
+  await fs.writeFile(summaryJsonPath, JSON.stringify(rows, null, 2) + "\n");
+  await fs.writeFile(summaryCsvPath, toCsv(rows));
+
+  const mdLines = [
+    "## Combined Test Summary (Scaling + Result Filtering)",
+    "",
+    `_Aggregated from most recent run batch (${recentDirs.length} timestamp directories)_`,
+    "",
+    "| Mode | Runs | Success | Tool Count | Tool Def Bytes | Total Tokens | Raw Result Bytes | Filtered Result Bytes | Result in Context | Est. Cost |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+  ];
+  for (const row of rows) {
+    mdLines.push(
+      `| ${row.mode} | ${row.runs} | ${row.success_rate} | ${row.tool_count_median ?? ""} | ${row.tool_definitions_bytes_median ?? ""} | ${row.total_tokens_median ?? ""} | ${row.result_bytes_raw_median ?? ""} | ${row.result_bytes_filtered_median ?? ""} | ${row.result_bytes_in_context_median ?? ""} | ${row.estimated_cost_usd_median ?? ""} |`,
+    );
+  }
+
+  // Add comparison analysis
+  mdLines.push("");
+  mdLines.push("## Comparison: Baseline vs Toolbox");
+  mdLines.push("");
+
+  const toolboxRow = rows.find((r) => r.mode === "toolbox");
+  const baselineRows = rows.filter((r) => r.mode.startsWith("baseline-"));
+
+  if (toolboxRow && baselineRows.length > 0) {
+    mdLines.push("| Tool Count | Tool Def Bytes Saved | Result Bytes Saved | Total Tokens Saved | Cost Saved |");
+    mdLines.push("| --- | --- | --- | --- | --- |");
+
+    for (const baseline of baselineRows) {
+      const toolDefSavings = formatDelta(
+        pctDelta(baseline.tool_definitions_bytes_median, toolboxRow.tool_definitions_bytes_median),
+      );
+      const resultBytesSavings = formatDelta(
+        pctDelta(
+          baseline.result_bytes_in_context_median || baseline.result_bytes_raw_median,
+          toolboxRow.result_bytes_in_context_median || toolboxRow.result_bytes_filtered_median,
+        ),
+      );
+      const tokenSavings = formatDelta(pctDelta(baseline.total_tokens_median, toolboxRow.total_tokens_median));
+      const costSavings = formatDelta(
+        pctDelta(baseline.estimated_cost_usd_median, toolboxRow.estimated_cost_usd_median),
+      );
+      mdLines.push(
+        `| ${baseline.tool_count_median} | ${toolDefSavings} | ${resultBytesSavings} | ${tokenSavings} | ${costSavings} |`,
+      );
+    }
+  }
+
+  await fs.writeFile(summaryMdPath, mdLines.join("\n") + "\n");
+  console.log(`Combined summary written to ${summaryDir}`);
+}
+
 async function run() {
   const args = parseArgs(process.argv);
   const inputDir = path.resolve(args.input);
@@ -414,8 +554,10 @@ async function run() {
     await aggregateExec(inputDir, summaryDir);
   } else if (args.type === "workflow") {
     await aggregateWorkflow(inputDir, summaryDir);
+  } else if (args.type === "combined") {
+    await aggregateCombined(inputDir, summaryDir);
   } else {
-    console.error(`Unknown type: ${args.type}. Use: scaling, exec, or workflow`);
+    console.error(`Unknown type: ${args.type}. Use: scaling, exec, workflow, or combined`);
     process.exitCode = 1;
   }
 }

@@ -1,0 +1,55 @@
+{
+  "runId": "5e2439ed-f14e-475c-8b0e-a7b52ae12c23",
+  "mode": "baseline-100",
+  "taskId": "supabase-execute-sql-query",
+  "provider": "openai",
+  "model": "gpt-5.2",
+  "tool_definition_scope": "scaledBaseline",
+  "filter_result": false,
+  "steps": [
+    {
+      "step": "tool_call_generation",
+      "prompt_tokens": 7698,
+      "completion_tokens": 26,
+      "total_tokens": 7724,
+      "latency_ms": 1108,
+      "tool_definitions_count": 100,
+      "tool_definitions_bytes": 33691,
+      "response": "{\"tool_name\":\"supabase.execute_sql\",\"arguments\":{\"query\":\"select * from public.your_table_name;\"}}",
+      "parsed_tool_call": {
+        "tool_name": "supabase.execute_sql",
+        "arguments": {
+          "query": "select * from public.your_table_name;"
+        }
+      }
+    },
+    {
+      "step": "tool_execution",
+      "latency_ms": 2136,
+      "result_bytes_raw": 282,
+      "result_bytes_filtered": 282,
+      "filter_applied": null
+    },
+    {
+      "step": "result_processing",
+      "prompt_tokens": 7838,
+      "completion_tokens": 60,
+      "total_tokens": 7898,
+      "latency_ms": 1459,
+      "result_bytes_in_context": 320,
+      "response": "The query failed because the table `public.your_table_name` doesn’t exist in your database (Postgres error `42P01: relation does not exist`). Replace `your_table_name` with an actual table name (or list available tables first) and rerun the query."
+    }
+  ],
+  "total_prompt_tokens": 15536,
+  "total_completion_tokens": 86,
+  "total_tokens": 15622,
+  "latency_ms": 4703,
+  "result_bytes_raw": 282,
+  "result_bytes_filtered": 282,
+  "tool_definitions_count": 100,
+  "tool_definitions_bytes": 33691,
+  "prompt_bytes": 34514,
+  "response_bytes": 249,
+  "estimated_cost_usd": 0.047898,
+  "success": true
+}

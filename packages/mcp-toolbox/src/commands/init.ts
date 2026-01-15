@@ -6,7 +6,7 @@ import {
   defaultConfigPath,
   defaultOutDir,
   fileExists,
-} from "mcp-toolbox-runtime";
+} from "@merl-ai/mcp-toolbox-runtime";
 import { writeToolboxConfigJson } from "../lib/writeConfig.js";
 import { writeAgentInstructions } from "../lib/writeAgentInstructions.js";
 

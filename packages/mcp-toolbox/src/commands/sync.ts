@@ -4,12 +4,8 @@ import { spawn } from "node:child_process";
 import { Command } from "commander";
 import { confirm, isCancel, log, progress, outro } from "@clack/prompts";
 
-import {
-  defaultConfigPath,
-  loadToolboxConfig,
-  fileExists,
-} from "mcp-toolbox-runtime";
-import type { ToolboxServerConfig } from "mcp-toolbox-runtime";
+import { loadToolboxConfigWithPath, fileExists } from "@merl-ai/mcp-toolbox-runtime";
+import type { ToolboxServerConfig } from "@merl-ai/mcp-toolbox-runtime";
 import { slugifyServerName } from "../lib/slug.js";
 import { resolveOutDir } from "../lib/resolveOutDir.js";
 
@@ -110,22 +106,11 @@ async function finalizeSyncOutput(args: {
 }
 
 export function syncCommand() {
-  // Defensive handling of defaultConfigPath to ensure it always returns a string
-  let defaultConfigPathValue: string;
-  try {
-    defaultConfigPathValue = defaultConfigPath();
-    if (!defaultConfigPathValue || typeof defaultConfigPathValue !== "string") {
-      defaultConfigPathValue = "mcp-toolbox.config.json";
-    }
-  } catch (err) {
-    defaultConfigPathValue = "mcp-toolbox.config.json";
-  }
-
   const cmd = new Command("sync")
     .description(
       "Introspect servers, snapshot schemas, and regenerate wrappers"
     )
-    .option("--config <path>", "Path to config file", defaultConfigPathValue)
+    .option("--config <path>", "Path to config file (auto-detected if not specified)")
     .option("--yes", "Run non-interactively (accept breaking changes)", false)
     .option(
       "--check",
@@ -133,23 +118,18 @@ export function syncCommand() {
       false
     )
     .option("--no-format", "Skip formatting generated output with oxfmt")
+    .option("--server <name>", "Sync only the specified server")
     .action(async (opts) => {
       let p: ReturnType<typeof progress> | undefined;
       let progressStarted = false;
       try {
-        const configPath: string = opts.config;
+        const configPathOpt: string | undefined = opts.config;
         const nonInteractive: boolean = Boolean(opts.yes);
         const checkOnly: boolean = Boolean(opts.check);
         const shouldFormat: boolean = Boolean(opts.format);
+        const serverFilter: string | undefined = opts.server;
 
-        if (!(await fileExists(configPath))) {
-          const errorMsg = `Config file not found at ${configPath}. Run 'mcp-toolbox init' first.`;
-          log.error(errorMsg);
-          process.exitCode = 1;
-          return;
-        }
-
-        const config = await loadToolboxConfig(configPath);
+        const { config, filepath: configPath } = await loadToolboxConfigWithPath(configPathOpt);
         const outDir = resolveOutDir({
           configPath,
           configOutDir: config.generation.outDir,
@@ -157,15 +137,26 @@ export function syncCommand() {
 
         const results = createSyncResults();
 
-        const totalServers = config.servers.length;
+        // Filter servers if --server option is specified
+        const serversToSync = serverFilter
+          ? config.servers.filter((s) => s.name === serverFilter)
+          : config.servers;
+
+        if (serverFilter && serversToSync.length === 0) {
+          log.error(`Server '${serverFilter}' not found in config`);
+          process.exitCode = 1;
+          return;
+        }
+
+        const totalServers = serversToSync.length;
         p = progress({ max: totalServers });
 
         if (totalServers > 0) {
           p.start("Syncing servers...");
           progressStarted = true;
 
-          for (let i = 0; i < config.servers.length; i++) {
-            const serverCfg = config.servers[i];
+          for (let i = 0; i < serversToSync.length; i++) {
+            const serverCfg = serversToSync[i];
             if (!serverCfg) continue;
 
             try {

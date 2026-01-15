@@ -1,7 +1,6 @@
 {
-  "name": "mcp-toolbox",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@merl-ai/mcp-toolbox",
+  "version": "0.1.0",
   "bin": {
     "mcp-toolbox": "./dist/bin.js"
   },
@@ -20,9 +19,10 @@
   },
   "dependencies": {
     "@clack/prompts": "1.0.0-alpha.9",
+    "@merl-ai/mcp-toolbox-runtime": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.25.2",
     "commander": "^14.0.2",
-    "mcp-toolbox-runtime": "workspace:*",
+    "json-schema-to-typescript": "^15.0.4",
     "zod": "^4.3.5"
   },
   "devDependencies": {
