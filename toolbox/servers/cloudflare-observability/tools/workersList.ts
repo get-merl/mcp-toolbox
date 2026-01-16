@@ -9,6 +9,7 @@ export interface WorkerslistInput {}
 
 export type WorkerslistOutput = unknown;
 
+
 /**
  * List all Workers in your Cloudflare account.
 
@@ -47,7 +48,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-
+      
       const input = JSON.parse(inputStr) as WorkerslistInput;
       const result = await workersList(input);
       console.log(JSON.stringify(result, null, 2));

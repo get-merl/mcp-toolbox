@@ -11,6 +11,7 @@ export interface GetedgefunctionInput {
 
 export type GetedgefunctionOutput = unknown;
 
+
 /**
  * Retrieves file contents for an Edge Function in a Supabase project.
  *
@@ -47,7 +48,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-
+      
       const input = JSON.parse(inputStr) as GetedgefunctionInput;
       const result = await getEdgeFunction(input);
       console.log(JSON.stringify(result, null, 2));

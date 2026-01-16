@@ -12,6 +12,11 @@
     "format": "turbo run format",
     "dev": "turbo run dev",
     "test": "turbo run test",
+    "act": "act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml",
+    "act:ci": "act push -W .github/workflows/ci.yml",
+    "act:sync": "act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml",
+    "act:release": "act push -W .github/workflows/release.yml",
+    "act:clean": "docker ps -a --filter 'name=act' --format '{{.ID}}' | xargs -r docker rm -f 2>/dev/null || true",
     "mcp-toolbox": "pnpm --filter mcp-toolbox exec mcp-toolbox",
     "mcp-toolbox-benchmark": "pnpm --filter @merl-ai/mcp-toolbox-benchmark benchmark"
   },
@@ -25,7 +30,7 @@
     "turbo": "^2.7.4"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=22.0.0",
     "pnpm": ">=10.0.0"
   },
   "packageManager": "pnpm@10.28.0"

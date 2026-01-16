@@ -9,6 +9,7 @@ export interface AccountslistInput {}
 
 export type AccountslistOutput = unknown;
 
+
 /**
  * List all accounts in your Cloudflare account
  *
@@ -17,9 +18,7 @@ export type AccountslistOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function accountsList(
-  input: AccountslistInput
-): Promise<AccountslistOutput> {
+export async function accountsList(input: AccountslistInput): Promise<AccountslistOutput> {
   return await callMcpTool<AccountslistOutput>({
     serverName: "cloudflare-observability",
     toolName: "accounts_list",
@@ -47,16 +46,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-
+      
       const input = JSON.parse(inputStr) as AccountslistInput;
       const result = await accountsList(input);
       console.log(JSON.stringify(result, null, 2));
       process.exit(0);
     } catch (error) {
-      console.error(
-        "Error:",
-        error instanceof Error ? error.message : String(error)
-      );
+      console.error("Error:", error instanceof Error ? error.message : String(error));
       if (error instanceof Error && error.stack) {
         console.error(error.stack);
       }

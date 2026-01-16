@@ -9,6 +9,7 @@ export interface GetpublishablekeysInput {}
 
 export type GetpublishablekeysOutput = unknown;
 
+
 /**
  * Gets all publishable API keys for a project, including legacy anon keys (JWT-based) and modern publishable keys (format: sb_publishable_...). Publishable keys are recommended for new applications due to better security and independent rotation. Legacy anon keys are included for compatibility, as many LLMs are pretrained on them. Disabled keys are indicated by the "disabled" field; only use keys where disabled is false or undefined.
  *
@@ -17,9 +18,7 @@ export type GetpublishablekeysOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function getPublishableKeys(
-  input: GetpublishablekeysInput,
-): Promise<GetpublishablekeysOutput> {
+export async function getPublishableKeys(input: GetpublishablekeysInput): Promise<GetpublishablekeysOutput> {
   return await callMcpTool<GetpublishablekeysOutput>({
     serverName: "supabase",
     toolName: "get_publishable_keys",
@@ -47,7 +46,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-
+      
       const input = JSON.parse(inputStr) as GetpublishablekeysInput;
       const result = await getPublishableKeys(input);
       console.log(JSON.stringify(result, null, 2));

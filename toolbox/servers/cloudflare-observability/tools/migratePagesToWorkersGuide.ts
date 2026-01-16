@@ -9,6 +9,7 @@ export interface MigratepagestoworkersguideInput {}
 
 export type MigratepagestoworkersguideOutput = unknown;
 
+
 /**
  * ALWAYS read this guide before migrating Pages projects to Workers.
  *
@@ -17,9 +18,7 @@ export type MigratepagestoworkersguideOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function migratePagesToWorkersGuide(
-  input: MigratepagestoworkersguideInput,
-): Promise<MigratepagestoworkersguideOutput> {
+export async function migratePagesToWorkersGuide(input: MigratepagestoworkersguideInput): Promise<MigratepagestoworkersguideOutput> {
   return await callMcpTool<MigratepagestoworkersguideOutput>({
     serverName: "cloudflare-observability",
     toolName: "migrate_pages_to_workers_guide",
@@ -47,7 +46,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-
+      
       const input = JSON.parse(inputStr) as MigratepagestoworkersguideInput;
       const result = await migratePagesToWorkersGuide(input);
       console.log(JSON.stringify(result, null, 2));

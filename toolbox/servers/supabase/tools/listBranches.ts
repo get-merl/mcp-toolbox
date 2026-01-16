@@ -9,6 +9,7 @@ export interface ListbranchesInput {}
 
 export type ListbranchesOutput = unknown;
 
+
 /**
  * Lists all development branches of a Supabase project. This will return branch details including status which you can use to check when operations like merge/rebase/reset complete.
  *
@@ -45,7 +46,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-
+      
       const input = JSON.parse(inputStr) as ListbranchesInput;
       const result = await listBranches(input);
       console.log(JSON.stringify(result, null, 2));

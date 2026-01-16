@@ -4,5 +4,11 @@
 # Use medium-sized runner image (includes more tools than micro)
 -P ubuntu-latest=catthehacker/ubuntu:act-latest
 
-# Verbose output for debugging
--v
+# Specify Apple M-series chip compatible container architecture
+--container-architecture linux/amd64
+
+# Reuse containers to avoid hanging on startup
+--reuse
+
+# Don't pull images every time (use cached)
+--pull=false

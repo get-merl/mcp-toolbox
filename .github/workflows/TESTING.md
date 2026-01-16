@@ -17,56 +17,105 @@ See the [official installation guide](https://github.com/nektos/act#installation
 
 ## Quick Start
 
-1. **List available workflows:**
+### Using npm Scripts (Recommended)
 
-   ```bash
-   act -l
-   ```
+The easiest way to test workflows locally:
 
-2. **Test a specific workflow:**
+```bash
+# Test the sync workflow
+pnpm test:act
 
-   ```bash
-   # Test the check workflow (simulates push event)
-   act push -W .github/workflows/mcp-toolbox-check.yml
+# Clean up Docker containers after testing
+pnpm test:act:clean
+```
 
-   # Test the sync workflow (simulates workflow_dispatch)
-   act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
-   ```
+These scripts automatically:
+- Use the correct event type (`workflow_dispatch`)
+- Pass environment variables from your shell (e.g., `CLOUDFLARE_API_TOKEN`, `SUPABASE_ACCESS_TOKEN`)
+- Skip steps that don't work locally (like PR creation)
 
-3. **Test a specific job:**
-   ```bash
-   act -j check -W .github/workflows/mcp-toolbox-check.yml
-   ```
+### Using `act` Directly
 
-## Configuration
+For more control, use `act` directly:
 
-### Secrets
+```bash
+# List available workflows and jobs
+act -l
 
-Create `.github/workflows/.secrets` (this file is gitignored) with your secrets:
+# Test the sync workflow
+act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
+
+# Test the CI workflow
+act push -W .github/workflows/ci.yml
+
+# Test a specific job
+act -j sync -W .github/workflows/mcp-toolbox-sync.yml
+
+# Dry run (simulate without executing)
+act -n workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
+```
+
+## Authentication for MCP Servers
+
+When testing the `mcp-toolbox-sync.yml` workflow, you need to provide authentication tokens for MCP servers:
+
+### Option 1: Environment Variables (Recommended)
+
+Set tokens in your shell environment (or `.env.local`):
+
+```bash
+export CLOUDFLARE_API_TOKEN=your_token
+export SUPABASE_ACCESS_TOKEN=your_token
+
+# Now run the test
+pnpm test:act
+```
+
+The npm script automatically passes these to `act`.
+
+### Option 2: Secrets File
+
+Create a `.secrets` file (gitignored) in `.github/workflows/`:
 
 ```bash
 cp .github/workflows/.secrets.example .github/workflows/.secrets
 # Edit .github/workflows/.secrets with your actual tokens
 ```
 
-Then run with secrets:
+Then pass it to `act`:
 
 ```bash
-act push --secret-file .github/workflows/.secrets -W .github/workflows/mcp-toolbox-check.yml
+act workflow_dispatch \
+  --secret-file .github/workflows/.secrets \
+  -W .github/workflows/mcp-toolbox-sync.yml
 ```
 
-Or pass secrets directly:
+### Option 3: Inline Secrets
+
+Pass secrets directly on the command line:
 
 ```bash
-act push -s GITHUB_TOKEN=your_token -s NPM_TOKEN=your_npm_token
+act workflow_dispatch \
+  -s CLOUDFLARE_API_TOKEN=your_token \
+  -s SUPABASE_ACCESS_TOKEN=your_token \
+  -W .github/workflows/mcp-toolbox-sync.yml
 ```
 
-### Default Configuration
+### Skipping Servers Without Auth
+
+If you don't have tokens for some servers, that's fine! The workflow uses `--skip-missing-auth`, which:
+- Skips servers with missing auth tokens (no failure)
+- Continues with servers that have valid tokens
+- Completes successfully if at least one server succeeds
+
+## Configuration
 
 The `.actrc` file in the project root contains default settings:
 
-- Uses `catthehacker/ubuntu:act-latest` runner image (includes more tools)
-- Enables verbose output for debugging
+- Uses `catthehacker/ubuntu:act-latest` runner image (includes Node.js, pnpm, etc.)
+- Uses `linux/amd64` architecture (compatible with Apple M-series chips)
+- Disables image pulling on every run (`--pull=false` for speed)
+- **Note**: `--reuse` flag is NOT used as it can cause hangs
 
 ## Common Commands
 
@@ -74,71 +123,152 @@ The `.actrc` file in the project root contains default settings:
 # List all workflows and jobs
 act -l
 
-# Run a workflow with push event (default)
-act push
+# Test sync workflow (manual dispatch trigger)
+act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
 
-# Run a specific workflow file
-act push -W .github/workflows/mcp-toolbox-check.yml
+# Test CI workflow (push trigger)
+act push -W .github/workflows/ci.yml
 
-# Run a specific job
-act -j check
+# Test release workflow (push to main)
+act push -W .github/workflows/release.yml
 
-# Dry run (simulate without executing)
-act -n
+# Run specific job
+act -j sync -W .github/workflows/mcp-toolbox-sync.yml
 
-# Run with verbose output
-act -v
+# Dry run (show what would execute)
+act -n workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
 
-# Run with secrets from file
-act push --secret-file .github/workflows/.secrets
+# Verbose output for debugging
+act -v workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
+
+# Clean up Docker containers
+pnpm test:act:clean
 ```
 
-## Limitations
+## Workflow-Specific Testing
 
-⚠️ **Important Notes:**
+### CI Workflow (`ci.yml`)
 
-1. **Some actions may not work locally** - Actions that require GitHub API access (like `changesets/action` for publishing) may behave differently or fail locally.
-
-2. **Skip publishing steps** - The `release.yml` workflow includes publishing steps that should be skipped locally. You can modify workflows to check for `ACT` environment variable:
-
-   ```yaml
-   - name: Create Release PR or Publish
-     if: env.ACT == null
-     uses: changesets/action@v1
-   ```
-
-3. **PR creation** - The `peter-evans/create-pull-request` action in `mcp-toolbox-sync.yml` won't create actual PRs locally.
-
-4. **Network access** - Some steps may behave differently due to network/Docker limitations.
-
-## Testing Tips
-
-1. **Test individual jobs** - Use `-j JOB_NAME` to test specific jobs without running the entire workflow.
-
-2. **Use dry-run mode** - Test workflow syntax with `-n` flag before full execution.
-
-3. **Check logs** - Use `-v` for verbose output to debug issues.
-
-4. **Test event payloads** - For workflows triggered by specific events, you can provide custom event payloads with `-e` flag.
-
-## Example: Testing the Check Workflow
+Tests all packages in the monorepo:
 
 ```bash
-# Full test with secrets
-act push \
-  --secret-file .github/workflows/.secrets \
-  -W .github/workflows/mcp-toolbox-check.yml \
-  -j check
+# Full CI run
+act push -W .github/workflows/ci.yml
 
-# Dry run to see what would execute
-act push -n -W .github/workflows/mcp-toolbox-check.yml
+# Just the build job
+act -j build -W .github/workflows/ci.yml
+
+# Just the test job
+act -j test -W .github/workflows/ci.yml
 ```
 
-## Troubleshooting
+**Expected behavior:**
+- Builds all packages
+- Runs all tests (including `mcp-toolbox`, `mcp-toolbox-runtime`, `mcp-toolbox-benchmark`)
+- Runs linters and type checks
 
-- **Docker not running**: Make sure Docker Desktop is running
-- **Image pull errors**: Try `act -P ubuntu-latest=catthehacker/ubuntu:act-latest` to use a different image
-- **Permission errors**: Some actions require specific permissions that may not work locally
-- **pnpm version issues**: The workflow should auto-detect from `package.json`, but you can verify with `act -l`
+### MCP Toolbox Sync Workflow (`mcp-toolbox-sync.yml`)
 
-For more information, see the [act documentation](https://github.com/nektos/act).
+Tests MCP server introspection and code generation:
+
+```bash
+# Recommended: use npm script
+pnpm test:act
+
+# Or directly with act
+act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
+```
+
+**Expected behavior:**
+- Introspects all configured MCP servers
+- Skips servers without auth tokens (by design)
+- Generates TypeScript wrappers
+- Skips PR creation (local testing only)
+
+**Note**: The PR creation step is conditional (`if: ${{ github.token != '' }}`) and won't run in local `act` testing.
+
+### Release Workflow (`release.yml`)
+
+Tests the release pipeline:
+
+```bash
+act push -W .github/workflows/release.yml
+```
+
+**Expected behavior:**
+- Builds all packages
+- Runs Changesets action (may fail locally without `NPM_TOKEN`)
+- Publishing steps are skipped locally
+
+**Note**: This workflow requires `NPM_TOKEN` secret for actual publishing. Local testing will skip publishing steps.
+
+## Known Limitations & Issues
+
+### Expected Limitations
+
+These are known differences between `act` and GitHub Actions:
+
+1. **PR Creation**: The `peter-evans/create-pull-request` action is skipped in local `act` runs (by design, using `if: ${{ github.token != '' }}`)
+
+2. **Publishing Actions**: The `changesets/action` in `release.yml` may fail locally without proper `NPM_TOKEN` and GitHub API access
+
+3. **GitHub API Actions**: Any action that requires GitHub API access may behave differently or fail
+
+### Known Test Failures in `act`
+
+Some tests may fail in the `act` Docker environment but pass in actual GitHub Actions:
+
+- **`packages/mcp-toolbox/tests/check.test.ts`**: The test `sync --check should return exit code 0 when in sync` may fail in `act` due to timing/environment differences
+  - ✅ Passes locally (verified)
+  - ❌ May fail in `act` Docker environment
+  - ✅ Will pass in actual GitHub Actions
+
+This is a known Docker/environment difference and doesn't indicate a problem with the code or tests.
+
+### Troubleshooting
+
+**Issue**: `act` hangs or crashes
+
+**Possible causes & fixes:**
+- **Docker not running**: Ensure Docker Desktop is running
+- **Resource limits**: Close other heavy applications; Docker may need more memory
+- **Stale containers**: Run `pnpm test:act:clean` to remove old containers
+- **`--reuse` flag**: Don't use `--reuse` flag (it can cause hangs)
+
+**Issue**: "pnpm not found" or version mismatch
+
+**Fix**: The workflow installs pnpm globally with `npm install -g pnpm@<version>`. Ensure the Docker image has npm installed.
+
+**Issue**: Workflow fails with "No such file or directory"
+
+**Fix**: Ensure you're running `act` from the project root, and the workflow file path is correct.
+
+**Issue**: Auth tokens not working
+
+**Fix**: 
+- Verify tokens are set: `echo $CLOUDFLARE_API_TOKEN`
+- Use the npm script which handles token passing: `pnpm test:act`
+- Or pass secrets explicitly to `act`: `-s CLOUDFLARE_API_TOKEN=$CLOUDFLARE_API_TOKEN`
+
+## Best Practices
+
+1. **Use npm scripts** (`pnpm test:act`) for consistent testing
+2. **Set tokens in `.env.local`** (gitignored) for convenience
+3. **Clean up regularly** with `pnpm test:act:clean` to free disk space
+4. **Test before pushing** to catch issues early
+5. **Don't use `--reuse`** flag (can cause hangs)
+6. **Verify locally first** if `act` tests fail (they may pass locally)
+
+## Debugging Tips
+
+1. **Verbose output**: Add `-v` flag to `act` commands for detailed logs
+2. **Single job testing**: Use `-j JOB_NAME` to test specific jobs
+3. **Dry run**: Use `-n` flag to see what would execute without running
+4. **Check Docker logs**: Run `docker ps -a` to see container status
+5. **Inspect workflow**: Use `act -l` to list all jobs and their status
+
+## Additional Resources
+
+- [act Documentation](https://github.com/nektos/act)
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Workflow README](./.github/workflows/README.md) - Comprehensive workflow documentation

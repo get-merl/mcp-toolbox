@@ -5,7 +5,11 @@
       "transport": {
         "type": "stdio",
         "command": "npx",
-        "args": ["mcp-remote", "https://observability.mcp.cloudflare.com/mcp"]
+        "args": ["mcp-remote", "https://observability.mcp.cloudflare.com/mcp"],
+        "auth": {
+          "type": "bearer",
+          "tokenEnv": "CLOUDFLARE_API_TOKEN"
+        }
       }
     },
     {
@@ -17,7 +21,11 @@
           "-y",
           "mcp-remote",
           "https://mcp.supabase.com/mcp?project_ref=grbydozdxbgurgdpkqvv&read_only=true"
-        ]
+        ],
+        "auth": {
+          "type": "bearer",
+          "tokenEnv": "SUPABASE_ACCESS_TOKEN"
+        }
       }
     }
   ],

@@ -338,6 +338,7 @@ MCP Toolbox supports bearer token authentication for both HTTP and stdio transpo
 #### Environment Variable Loading
 
 Before config validation, MCP Toolbox automatically loads environment variables from:
+
 1. `.env` (lower priority)
 2. `.env.local` (higher priority, overrides `.env`)
 
@@ -444,55 +445,110 @@ vim mcp-toolbox.config.json
 npx @merl-ai/mcp-toolbox sync
 ```
 
-## Automation
+## CI/CD & Automation
 
-### GitHub Actions
+This repository uses GitHub Actions for continuous integration and automated maintenance. All workflows support local testing with [`act`](https://github.com/nektos/act).
 
-This repository includes example GitHub Actions workflows:
+### Available Workflows
 
-#### Auto-Sync Workflow
+#### CI Workflow (`ci.yml`)
 
-`.github/workflows/mcp-toolbox-sync.yml` — Scheduled sync that:
+Runs on every PR and push to `main`. Builds, tests, and lints all packages.
 
-- Runs on a schedule (e.g., daily)
-- Regenerates snapshots and wrappers
-- Opens a PR if changes are detected
+**Triggers:**
 
-Enable it by:
+- Pull requests to `main`
+- Pushes to `main` branch
 
-```bash
-# Copy the workflow file (if not already present)
-cp .github/workflows/mcp-toolbox-sync.yml.example .github/workflows/mcp-toolbox-sync.yml
+**Jobs:**
 
-# Commit and push
-git add .github/workflows/mcp-toolbox-sync.yml
-git commit -m "Add MCP Toolbox auto-sync workflow"
-git push
-```
+- Build all packages
+- Run tests across all packages
+- Run linters and type checks
 
-#### CI Check Workflow
-
-`.github/workflows/mcp-toolbox-check.yml` — CI gate that:
-
-- Runs on every PR
-- Fails if upstream schemas changed but wrappers weren't regenerated
-- Uses `sync --check` to detect drift
-
-Enable it by:
+**Test locally:**
 
 ```bash
-# Copy the workflow file (if not already present)
-cp .github/workflows/mcp-toolbox-check.yml.example .github/workflows/mcp-toolbox-check.yml
-
-# Commit and push
-git add .github/workflows/mcp-toolbox-check.yml
-git commit -m "Add MCP Toolbox CI check"
-git push
+pnpm test:act
+# or
+act push -W .github/workflows/ci.yml
 ```
 
-#### Testing Workflows Locally
+#### MCP Toolbox Sync Workflow (`mcp-toolbox-sync.yml`)
 
-You can test GitHub Actions workflows locally using [`act`](https://github.com/nektos/act) before pushing changes.
+Automatically regenerates MCP tool wrappers when upstream schemas change.
+
+**Triggers:**
+
+- Scheduled (configurable cron)
+- Manual dispatch (via GitHub UI or API)
+- Push to `main` (for immediate sync after config changes)
+
+**Jobs:**
+
+- Introspects all configured MCP servers
+- Regenerates TypeScript wrappers if schemas changed
+- Creates a PR with changes (if any)
+
+**Features:**
+
+- **CI-aware authentication**: Skips servers with missing auth tokens (using `--skip-missing-auth`)
+- **Conditional PR creation**: Only creates PRs in GitHub Actions (not in local `act` testing)
+- **Idempotent**: Safe to run multiple times; only creates PR if changes detected
+
+**Test locally:**
+
+```bash
+pnpm test:act
+# or
+act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
+```
+
+**Note**: Local testing with `act` skips PR creation and servers without auth tokens.
+
+#### Release Workflow (`release.yml`)
+
+Automated package publishing using Changesets.
+
+**Triggers:**
+
+- Push to `main` branch
+
+**Jobs:**
+
+- Creates "Version Packages" PR if changesets are present
+- Publishes to npm when version PR is merged
+- Includes concurrency control to prevent simultaneous releases
+
+**Features:**
+
+- Automated versioning and changelog generation
+- Conditional publishing (only runs when version PR is merged)
+- npm provenance tracking
+
+**Note**: This workflow requires `NPM_TOKEN` secret for publishing.
+
+### Authentication & Secrets
+
+Workflows that interact with MCP servers require authentication tokens as GitHub secrets:
+
+1. **Add secrets to your repository:**
+   - Go to Settings → Secrets and variables → Actions
+   - Add required tokens (e.g., `CLOUDFLARE_API_TOKEN`, `SUPABASE_ACCESS_TOKEN`)
+
+2. **Update workflow files** to pass secrets as environment variables:
+
+```yaml
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+```
+
+3. **CI behavior**: Servers with missing tokens are automatically skipped (no failure)
+
+### Local Testing with `act`
+
+Test workflows locally before pushing:
 
 **Installation:**
 
@@ -506,44 +562,40 @@ brew install act
 **Quick Start:**
 
 ```bash
+# Test sync workflow (using npm script)
+pnpm test:act
+
+# Or use act directly
+act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
+
+# Test CI workflow
+act push -W .github/workflows/ci.yml
+
 # List all workflows
 act -l
 
-# Test a specific workflow
-./scripts/test-workflow.sh mcp-toolbox-check push
-
-# Or directly with act
-act push -W .github/workflows/mcp-toolbox-check.yml
+# Clean up Docker containers after testing
+pnpm test:act:clean
 ```
 
-**Set up secrets (optional):**
+**With authentication tokens:**
 
 ```bash
-# Copy the example secrets file
-cp .github/workflows/.secrets.example .github/workflows/.secrets
+# Set tokens in your environment (e.g., in .env.local)
+export CLOUDFLARE_API_TOKEN=your_token
+export SUPABASE_ACCESS_TOKEN=your_token
 
-# Edit with your tokens
-# Then test with secrets
-act push --secret-file .github/workflows/.secrets -W .github/workflows/mcp-toolbox-check.yml
+# Tokens are automatically passed to act by npm script
+pnpm test:act
 ```
 
-**Common commands:**
+**Limitations:**
 
-```bash
-# Test check workflow
-./scripts/test-workflow.sh mcp-toolbox-check push
+- PR creation steps are skipped in local testing
+- Some GitHub-specific actions may behave differently
+- Servers without auth tokens are skipped (by design)
 
-# Test sync workflow
-./scripts/test-workflow.sh mcp-toolbox-sync workflow_dispatch
-
-# Dry run (simulate without executing)
-act push -n -W .github/workflows/mcp-toolbox-check.yml
-
-# Run specific job
-act -j check -W .github/workflows/mcp-toolbox-check.yml
-```
-
-For detailed documentation, see [`.github/workflows/TESTING.md`](.github/workflows/TESTING.md).
+For comprehensive documentation on workflow structure, troubleshooting, and advanced testing, see [`.github/workflows/README.md`](.github/workflows/README.md).
 
 ## Troubleshooting
 

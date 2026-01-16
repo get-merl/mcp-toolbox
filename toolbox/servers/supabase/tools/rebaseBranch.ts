@@ -11,6 +11,7 @@ export interface RebasebranchInput {
 
 export type RebasebranchOutput = unknown;
 
+
 /**
  * Rebases a development branch on production. This will effectively run any newer migrations from production onto this branch to help handle migration drift.
  *
@@ -47,7 +48,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-
+      
       const input = JSON.parse(inputStr) as RebasebranchInput;
       const result = await rebaseBranch(input);
       console.log(JSON.stringify(result, null, 2));

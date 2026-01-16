@@ -45,6 +45,9 @@ describe("sync --check command", () => {
     });
 
     // Exit code 0 = in sync
+    // Note: This test expects servers to be configured with no auth requirements
+    // In CI environments without auth tokens, this may fail
+    // If servers are configured in the test config, they should be mock servers
     expect(result.exitCode).toBe(0);
   });
 

@@ -9,6 +9,7 @@ export interface ListedgefunctionsInput {}
 
 export type ListedgefunctionsOutput = unknown;
 
+
 /**
  * Lists all Edge Functions in a Supabase project.
  *
@@ -17,9 +18,7 @@ export type ListedgefunctionsOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function listEdgeFunctions(
-  input: ListedgefunctionsInput,
-): Promise<ListedgefunctionsOutput> {
+export async function listEdgeFunctions(input: ListedgefunctionsInput): Promise<ListedgefunctionsOutput> {
   return await callMcpTool<ListedgefunctionsOutput>({
     serverName: "supabase",
     toolName: "list_edge_functions",
@@ -47,7 +46,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-
+      
       const input = JSON.parse(inputStr) as ListedgefunctionsInput;
       const result = await listEdgeFunctions(input);
       console.log(JSON.stringify(result, null, 2));
