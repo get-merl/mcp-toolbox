@@ -41,7 +41,7 @@ jobs:
 
       - name: Create PR if changes
         # Only run in GitHub Actions (not in local act testing)
-        if: ${{ github.token != '' }}
+        if: github.token != ''
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "chore(toolbox): sync generated MCP wrappers"
