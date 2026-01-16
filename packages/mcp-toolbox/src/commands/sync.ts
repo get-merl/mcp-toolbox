@@ -456,6 +456,12 @@ async function verifyGeneratedCode(
   outDir: string,
   servers: ToolboxServerConfig[]
 ): Promise<void> {
+  // If no servers are configured, there's nothing to verify
+  // This is considered a valid state (exit code 0)
+  if (servers.length === 0) {
+    return;
+  }
+
   const catalogPath = path.join(outDir, "catalog.json");
   const readmePath = path.join(outDir, "README.md");
   const serversDir = path.join(outDir, "servers");

@@ -214,16 +214,9 @@ These are known differences between `act` and GitHub Actions:
 
 3. **GitHub API Actions**: Any action that requires GitHub API access may behave differently or fail
 
-### Known Test Failures in `act`
+### Known Test Behavior
 
-Some tests may fail in the `act` Docker environment but pass in actual GitHub Actions:
-
-- **`packages/mcp-toolbox/tests/check.test.ts`**: The test `sync --check should return exit code 0 when in sync` may fail in `act` due to timing/environment differences
-  - ✅ Passes locally (verified)
-  - ❌ May fail in `act` Docker environment
-  - ✅ Will pass in actual GitHub Actions
-
-This is a known Docker/environment difference and doesn't indicate a problem with the code or tests.
+All tests should pass in both local development and CI environments. If you encounter test failures in `act` that don't reproduce locally, this may indicate a Docker environment difference. Please verify tests pass locally before investigating further.
 
 ### Troubleshooting
 
