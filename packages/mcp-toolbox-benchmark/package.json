@@ -1,6 +1,7 @@
 {
   "name": "@merl-ai/mcp-toolbox-benchmark",
   "version": "0.1.0",
+  "private": true,
   "description": "Context metrics benchmarking for MCP tool definitions",
   "bin": {
     "mcp-benchmark": "./dist/bin.js"
