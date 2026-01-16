@@ -516,17 +516,23 @@ Automated package publishing using Changesets.
 
 **Jobs:**
 
+- Builds and tests all packages
 - Creates "Version Packages" PR if changesets are present
-- Publishes to npm when version PR is merged
+- Publishes to npm when `NPM_TOKEN` is configured and version PR is merged
 - Includes concurrency control to prevent simultaneous releases
 
 **Features:**
 
 - Automated versioning and changelog generation
-- Conditional publishing (only runs when version PR is merged)
-- npm provenance tracking
+- Conditional publishing (only runs when `NPM_TOKEN` secret is set)
+- Safe to run without npm credentials (publishing step is skipped)
+- npm provenance tracking when publishing
 
-**Note**: This workflow requires `NPM_TOKEN` secret for publishing.
+**Setting up publishing:**
+
+1. Create an npm access token at https://www.npmjs.com/settings/[username]/tokens
+2. Add `NPM_TOKEN` to GitHub repository secrets
+3. The workflow will automatically publish when changesets are merged
 
 ### Authentication & Secrets
 

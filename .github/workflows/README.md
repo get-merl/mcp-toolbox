@@ -63,8 +63,20 @@ CLOUDFLARE_API_TOKEN=xxx SUPABASE_ACCESS_TOKEN=yyy pnpm run act:sync
 - Builds all packages
 - Runs tests
 - Uses changesets to manage versions
-- Publishes to npm if changesets are present
-- **Requires npm token** (via GitHub Secret: `NPM_TOKEN`)
+- **Conditionally** publishes to npm if:
+  - Changesets are present (version changes)
+  - `NPM_TOKEN` is configured in GitHub Secrets
+- Creates "Version Packages" PR if changesets exist but haven't been published yet
+
+**Behavior without `NPM_TOKEN`**:
+- Workflow runs successfully (builds, tests)
+- Publishing step is skipped (no failure)
+- Safe to merge code before npm publishing is set up
+
+**Setting up npm publishing**:
+1. Create an npm access token at https://www.npmjs.com/settings/[username]/tokens
+2. Add it as `NPM_TOKEN` in GitHub Secrets
+3. Next push will enable publishing
 
 **Local testing**:
 ```bash
