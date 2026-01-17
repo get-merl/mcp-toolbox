@@ -14,7 +14,6 @@ export interface WorkersgetworkercodeInput {
 
 export type WorkersgetworkercodeOutput = unknown;
 
-
 /**
  * Get the source code of a Cloudflare Worker. Note: This may be a bundled version of the worker.
  *
@@ -23,7 +22,9 @@ export type WorkersgetworkercodeOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function workersGetWorkerCode(input: WorkersgetworkercodeInput): Promise<WorkersgetworkercodeOutput> {
+export async function workersGetWorkerCode(
+  input: WorkersgetworkercodeInput,
+): Promise<WorkersgetworkercodeOutput> {
   return await callMcpTool<WorkersgetworkercodeOutput>({
     serverName: "cloudflare-observability",
     toolName: "workers_get_worker_code",
@@ -51,7 +52,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as WorkersgetworkercodeInput;
       const result = await workersGetWorkerCode(input);
       console.log(JSON.stringify(result, null, 2));

@@ -4,6 +4,11 @@ A CLI for turning MCP (Model Context Protocol) servers into TypeScript functions
 
 Instead of loading thousands of tool definitions into an LLM context window, `mcp-toolbox` generates a small SDK tree that IDE agents can discover by reading code on demand.
 
+## Prerequisites
+
+- Node.js >= 20.0.0
+- npm or pnpm
+
 ## Quick Start
 
 Get up and running in 3 steps:
@@ -67,7 +72,7 @@ npx mcp-toolbox sync
 
 ## Getting Started Guide
 
-Follow these steps to set up MCP Toolbox in your project:
+The Quick Start above covers the essentials. This section provides detailed explanations for each step and additional options:
 
 ### Step 1: Initialize Configuration
 
@@ -204,6 +209,43 @@ npm install -g tsx
 
 Or use `npx tsx` (no installation required).
 
+### Step 5: Create Custom Scripts (Optional)
+
+The `toolbox/scripts/` folder is for creating custom workflows that combine MCP tools with your own logic. This is especially useful for:
+
+- **Orchestrating multiple tools** — Chain tool calls together
+- **Adding business logic** — Conditional execution, error handling, retries
+- **Creating reusable workflows** — Multi-step operations that accomplish higher-level goals
+- **Collaborating with AI** — LLMs and humans can iterate on scripts together
+
+Example script:
+
+```typescript
+// toolbox/scripts/my-workflow.ts
+import { listTables, executeSql } from "../servers/supabase/index.js";
+
+async function main() {
+  const tables = await listTables({ schemas: ["public"] });
+
+  for (const table of tables.tables) {
+    const result = await executeSql({
+      sql: `SELECT COUNT(*) FROM ${table.name}`,
+    });
+    console.log(`${table.name}: ${result.rows[0].count} rows`);
+  }
+}
+
+main().catch(console.error);
+```
+
+Run scripts with:
+
+```bash
+npx tsx toolbox/scripts/my-workflow.ts
+```
+
+Scripts are testable, versionable, and can be committed to source control. See `toolbox/scripts/README.md` for more examples.
+
 ## Project Structure
 
 ```
@@ -217,6 +259,9 @@ your-project/
 │   │       ├── index.ts       # Barrel exports
 │   │       └── tools/         # Individual tool wrappers
 │   │           └── *.ts
+│   ├── scripts/               # Custom scripts folder
+│   │   ├── README.md          # Scripts documentation
+│   │   └── example.ts         # Starter template
 │   ├── .snapshots/            # Schema snapshots
 │   │   └── <server-name>/
 │   │       ├── latest.json    # Latest tool schemas
@@ -226,13 +271,15 @@ your-project/
 │           └── *.md
 └── .github/workflows/         # Optional automation
     ├── mcp-toolbox-sync.yml   # Auto-sync workflow
-    └── mcp-toolbox-check.yml  # CI check workflow
+    ├── ci.yml                 # CI workflow
+    └── release.yml            # Release workflow
 ```
 
 ### Key Directories
 
 - **`toolbox/`** — Generated TypeScript wrappers (commit to version control)
 - **`toolbox/servers/<serverSlug>/`** — Server-specific wrappers
+- **`toolbox/scripts/`** — Custom scripts that combine tools with your logic
 - **`toolbox/catalog.json`** — Searchable index of all tools
 - **`toolbox/.snapshots/`** — Schema snapshots for deterministic builds
 - **`toolbox/.reports/`** — Human-readable diff reports when schemas change
@@ -319,17 +366,30 @@ Array of MCP server configurations:
 
 #### `generation`
 
-Code generation settings:
+Code generation settings (required):
 
-- **`outDir`** (string, default: `"./toolbox"`): Output directory for generated files
-- **`language`** (string, default: `"ts"`): Target language (currently only `"ts"`)
+- **`outDir`** (string, required): Output directory for generated files (e.g., `"./toolbox"`)
+- **`language`** (string, required): Target language (currently only `"ts"`)
 
 #### `security`
 
-Security settings:
+Security settings (required):
 
-- **`allowStdioExec`** (boolean, default: `false`): Allow executing stdio commands. Set to `true` to enable stdio transports.
-- **`envAllowlist`** (string[]): Environment variables to pass through to stdio transports. Only allowlisted variables are copied (explicit `transport.env` entries are always included).
+- **`allowStdioExec`** (boolean, required): Allow executing stdio commands. Set to `true` to enable stdio transports.
+- **`envAllowlist`** (string[], required): Environment variables to pass through to stdio transports. Only allowlisted variables are copied (explicit `transport.env` entries are always included).
+
+#### `cli`
+
+CLI behavior settings (optional):
+
+- **`interactive`** (boolean, optional): Enable interactive prompts. Defaults to `true` if omitted.
+
+#### `client`
+
+MCP client metadata (optional):
+
+- **`name`** (string, optional): Client name sent to MCP servers during handshake. Defaults to `"mcp-toolbox-runtime"` if omitted.
+- **`version`** (string, optional): Client version sent to MCP servers during handshake. Defaults to `"0.1.0"` if omitted.
 
 ### Authentication
 
@@ -433,6 +493,20 @@ npx @merl-ai/mcp-toolbox sync --server supabase
 npx @merl-ai/mcp-toolbox sync --check
 ```
 
+### Introspect a Server
+
+Connect to a server and snapshot its tools/resources without regenerating code:
+
+```bash
+# Introspect all servers
+npx @merl-ai/mcp-toolbox introspect
+
+# Introspect a specific server
+npx @merl-ai/mcp-toolbox introspect --server supabase
+```
+
+This creates snapshots in `toolbox/.snapshots/` but does not generate TypeScript wrappers. Useful for debugging server connections or inspecting schema changes.
+
 ### Remove a Server
 
 Edit `mcp-toolbox.config.json` and remove the server entry, then sync:
@@ -447,161 +521,22 @@ npx @merl-ai/mcp-toolbox sync
 
 ## CI/CD & Automation
 
-This repository uses GitHub Actions for continuous integration and automated maintenance. All workflows support local testing with [`act`](https://github.com/nektos/act).
+This repository uses GitHub Actions for continuous integration and automated maintenance. Three workflows are configured:
 
-### Available Workflows
+- **CI** (`ci.yml`) - Runs on every PR and push to `main` (builds, tests, lints)
+- **MCP Toolbox Sync** (`mcp-toolbox-sync.yml`) - Automatically regenerates MCP wrappers when upstream schemas change
+- **Release** (`release.yml`) - Publishes packages to npm using Changesets
 
-#### CI Workflow (`ci.yml`)
-
-Runs on every PR and push to `main`. Builds, tests, and lints all packages.
-
-**Triggers:**
-
-- Pull requests to `main`
-- Pushes to `main` branch
-
-**Jobs:**
-
-- Build all packages
-- Run tests across all packages
-- Run linters and type checks
-
-**Test locally:**
+All workflows support local testing with [`act`](https://github.com/nektos/act):
 
 ```bash
-pnpm test:act
-# or
-act push -W .github/workflows/ci.yml
+pnpm act:ci      # Test CI workflow
+pnpm act:sync    # Test sync workflow
+pnpm act:release # Test release workflow
+pnpm act:clean   # Clean up Docker containers
 ```
 
-#### MCP Toolbox Sync Workflow (`mcp-toolbox-sync.yml`)
-
-Automatically regenerates MCP tool wrappers when upstream schemas change.
-
-**Triggers:**
-
-- Scheduled (configurable cron)
-- Manual dispatch (via GitHub UI or API)
-- Push to `main` (for immediate sync after config changes)
-
-**Jobs:**
-
-- Introspects all configured MCP servers
-- Regenerates TypeScript wrappers if schemas changed
-- Creates a PR with changes (if any)
-
-**Features:**
-
-- **CI-aware authentication**: Skips servers with missing auth tokens (using `--skip-missing-auth`)
-- **Conditional PR creation**: Only creates PRs in GitHub Actions (not in local `act` testing)
-- **Idempotent**: Safe to run multiple times; only creates PR if changes detected
-
-**Test locally:**
-
-```bash
-pnpm test:act
-# or
-act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
-```
-
-**Note**: Local testing with `act` skips PR creation and servers without auth tokens.
-
-#### Release Workflow (`release.yml`)
-
-Automated package publishing using Changesets.
-
-**Triggers:**
-
-- Push to `main` branch
-
-**Jobs:**
-
-- Builds and tests all packages
-- Creates "Version Packages" PR if changesets are present
-- Publishes to npm when `NPM_TOKEN` is configured and version PR is merged
-- Includes concurrency control to prevent simultaneous releases
-
-**Features:**
-
-- Automated versioning and changelog generation
-- Conditional publishing (only runs when `NPM_TOKEN` secret is set)
-- Safe to run without npm credentials (publishing step is skipped)
-- npm provenance tracking when publishing
-
-**Setting up publishing:**
-
-1. Create an npm access token at https://www.npmjs.com/settings/[username]/tokens
-2. Add `NPM_TOKEN` to GitHub repository secrets
-3. The workflow will automatically publish when changesets are merged
-
-### Authentication & Secrets
-
-Workflows that interact with MCP servers require authentication tokens as GitHub secrets:
-
-1. **Add secrets to your repository:**
-   - Go to Settings → Secrets and variables → Actions
-   - Add required tokens (e.g., `CLOUDFLARE_API_TOKEN`, `SUPABASE_ACCESS_TOKEN`)
-
-2. **Update workflow files** to pass secrets as environment variables:
-
-```yaml
-env:
-  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-```
-
-3. **CI behavior**: Servers with missing tokens are automatically skipped (no failure)
-
-### Local Testing with `act`
-
-Test workflows locally before pushing:
-
-**Installation:**
-
-```bash
-# macOS
-brew install act
-
-# Other platforms: see https://github.com/nektos/act#installation
-```
-
-**Quick Start:**
-
-```bash
-# Test sync workflow (using npm script)
-pnpm test:act
-
-# Or use act directly
-act workflow_dispatch -W .github/workflows/mcp-toolbox-sync.yml
-
-# Test CI workflow
-act push -W .github/workflows/ci.yml
-
-# List all workflows
-act -l
-
-# Clean up Docker containers after testing
-pnpm test:act:clean
-```
-
-**With authentication tokens:**
-
-```bash
-# Set tokens in your environment (e.g., in .env.local)
-export CLOUDFLARE_API_TOKEN=your_token
-export SUPABASE_ACCESS_TOKEN=your_token
-
-# Tokens are automatically passed to act by npm script
-pnpm test:act
-```
-
-**Limitations:**
-
-- PR creation steps are skipped in local testing
-- Some GitHub-specific actions may behave differently
-- Servers without auth tokens are skipped (by design)
-
-For comprehensive documentation on workflow structure, troubleshooting, and advanced testing, see [`.github/workflows/README.md`](.github/workflows/README.md).
+For detailed workflow documentation, including authentication setup, secrets configuration, and advanced testing, see [`.github/workflows/README.md`](.github/workflows/README.md).
 
 ## Troubleshooting
 

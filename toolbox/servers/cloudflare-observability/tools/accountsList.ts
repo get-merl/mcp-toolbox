@@ -9,7 +9,6 @@ export interface AccountslistInput {}
 
 export type AccountslistOutput = unknown;
 
-
 /**
  * List all accounts in your Cloudflare account
  *
@@ -46,7 +45,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as AccountslistInput;
       const result = await accountsList(input);
       console.log(JSON.stringify(result, null, 2));

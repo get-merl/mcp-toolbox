@@ -18,7 +18,6 @@ export interface ApplymigrationInput {
 
 export type ApplymigrationOutput = unknown;
 
-
 /**
  * Applies a migration to the database. Use this when executing DDL operations. Do not hardcode references to generated IDs in data migrations.
  *
@@ -55,7 +54,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as ApplymigrationInput;
       const result = await applyMigration(input);
       console.log(JSON.stringify(result, null, 2));

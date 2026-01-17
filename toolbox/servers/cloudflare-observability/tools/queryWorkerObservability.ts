@@ -209,7 +209,6 @@ export interface QueryworkerobservabilityInput {
 
 export type QueryworkerobservabilityOutput = unknown;
 
-
 /**
  * Query the Workers Observability API to analyze logs and metrics from your Cloudflare Workers.
 
@@ -238,7 +237,9 @@ This tool provides three primary views of your Worker data:
  * @param input Tool input
  * @returns Tool output
  */
-export async function queryWorkerObservability(input: QueryworkerobservabilityInput): Promise<QueryworkerobservabilityOutput> {
+export async function queryWorkerObservability(
+  input: QueryworkerobservabilityInput,
+): Promise<QueryworkerobservabilityOutput> {
   return await callMcpTool<QueryworkerobservabilityOutput>({
     serverName: "cloudflare-observability",
     toolName: "query_worker_observability",
@@ -266,7 +267,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as QueryworkerobservabilityInput;
       const result = await queryWorkerObservability(input);
       console.log(JSON.stringify(result, null, 2));

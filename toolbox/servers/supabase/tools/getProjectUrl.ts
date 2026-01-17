@@ -9,7 +9,6 @@ export interface GetprojecturlInput {}
 
 export type GetprojecturlOutput = unknown;
 
-
 /**
  * Gets the API URL for a project.
  *
@@ -46,7 +45,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as GetprojecturlInput;
       const result = await getProjectUrl(input);
       console.log(JSON.stringify(result, null, 2));

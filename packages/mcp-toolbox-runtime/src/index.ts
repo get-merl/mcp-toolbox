@@ -5,7 +5,7 @@ import type { ToolboxConfig } from "./config.js";
 import { loadToolboxConfig } from "./loadConfig.js";
 import { buildStdioEnv } from "./env.js";
 import { resolveAuth } from "./auth/resolver.js";
-import { getOrCreatePool, closeAllPools, closePool, getPoolStats } from "./connectionPool.js";
+import { getOrCreatePool, closeAllPools } from "./connectionPool.js";
 
 type CallArgs = { serverName: string; toolName: string; input: unknown };
 
@@ -102,7 +102,7 @@ let shutdownRegistered = false;
 function registerShutdownHandlers() {
   if (shutdownRegistered) return;
   shutdownRegistered = true;
-  
+
   const shutdown = async () => {
     await closeAllPools();
     process.exit(0);
@@ -121,7 +121,12 @@ export type { ToolboxConfig, ToolboxServerConfig } from "./config.js";
 
 // Export shared utilities used by CLI
 export { defaultConfigPath, defaultOutDir, resolveFromCwd } from "./paths.js";
-export { loadToolboxConfig, loadToolboxConfigWithPath, fileExists, clearConfigCache } from "./loadConfig.js";
+export {
+  loadToolboxConfig,
+  loadToolboxConfigWithPath,
+  fileExists,
+  clearConfigCache,
+} from "./loadConfig.js";
 export { buildStdioEnv } from "./env.js";
 
 // Export auth utilities
@@ -129,4 +134,8 @@ export { resolveAuth, isAuthError, loadEnvFiles } from "./auth/index.js";
 export type { AuthConfig, AuthResult } from "./auth/index.js";
 
 // Export connection pool control methods
-export { closePool as closeConnection, closeAllPools as closeAllConnections, getPoolStats } from "./connectionPool.js";
+export {
+  closePool as closeConnection,
+  closeAllPools as closeAllConnections,
+  getPoolStats,
+} from "./connectionPool.js";

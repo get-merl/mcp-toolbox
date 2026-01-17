@@ -9,7 +9,6 @@ export interface ListmigrationsInput {}
 
 export type ListmigrationsOutput = unknown;
 
-
 /**
  * Lists all migrations in the database.
  *
@@ -46,7 +45,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as ListmigrationsInput;
       const result = await listMigrations(input);
       console.log(JSON.stringify(result, null, 2));

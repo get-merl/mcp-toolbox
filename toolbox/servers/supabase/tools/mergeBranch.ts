@@ -11,7 +11,6 @@ export interface MergebranchInput {
 
 export type MergebranchOutput = unknown;
 
-
 /**
  * Merges migrations and edge functions from a development branch to production.
  *
@@ -48,7 +47,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as MergebranchInput;
       const result = await mergeBranch(input);
       console.log(JSON.stringify(result, null, 2));

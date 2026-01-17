@@ -18,7 +18,6 @@ export interface CreatebranchInput {
 
 export type CreatebranchOutput = unknown;
 
-
 /**
  * Creates a development branch on a Supabase project. This will apply all migrations from the main project to a fresh branch database. Note that production data will not carry over. The branch will get its own project_id via the resulting project_ref. Use this ID to execute queries and migrations on the branch.
  *
@@ -55,7 +54,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as CreatebranchInput;
       const result = await createBranch(input);
       console.log(JSON.stringify(result, null, 2));

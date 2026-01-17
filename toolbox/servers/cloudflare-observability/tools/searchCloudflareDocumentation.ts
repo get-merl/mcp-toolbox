@@ -11,7 +11,6 @@ export interface SearchcloudflaredocumentationInput {
 
 export type SearchcloudflaredocumentationOutput = unknown;
 
-
 /**
  * Search the Cloudflare documentation.
 
@@ -29,7 +28,9 @@ export type SearchcloudflaredocumentationOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function searchCloudflareDocumentation(input: SearchcloudflaredocumentationInput): Promise<SearchcloudflaredocumentationOutput> {
+export async function searchCloudflareDocumentation(
+  input: SearchcloudflaredocumentationInput,
+): Promise<SearchcloudflaredocumentationOutput> {
   return await callMcpTool<SearchcloudflaredocumentationOutput>({
     serverName: "cloudflare-observability",
     toolName: "search_cloudflare_documentation",
@@ -57,7 +58,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as SearchcloudflaredocumentationInput;
       const result = await searchCloudflareDocumentation(input);
       console.log(JSON.stringify(result, null, 2));

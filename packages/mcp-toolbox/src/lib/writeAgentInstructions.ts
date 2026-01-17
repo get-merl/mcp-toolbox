@@ -30,51 +30,48 @@ export async function writeAgentInstructions(
 function generateAgentInstructions(toolboxDir: string): string {
   return `## MCP Toolbox
 
-This repository uses \`mcp-toolbox\` to generate type-safe wrappers for MCP server tools.
+Type-safe wrappers for MCP server tools.
 
-### Discovering Tools
+### Discover Tools
 
-- Browse available servers: \`${toolboxDir}/servers/\`
-- Search by name/description: \`${toolboxDir}/catalog.json\`
-- Read tool implementations: \`${toolboxDir}/servers/{server}/tools/{tool}.ts\`
+- \`${toolboxDir}/catalog.json\` — list of all servers and tools with descriptions
+- \`${toolboxDir}/servers/{server}/tools/{tool}.ts\` — tool implementations
 
-### Using Tools
+### Execute Tools
 
-The generated tool wrappers can be used in two ways:
-
-#### Direct Execution (Recommended for CLI usage)
-
-Each tool file is executable and reads JSON input from stdin. This is the simplest way to call tools from the command line:
+**Single tool call** → run directly, no script needed:
 
 \`\`\`bash
-# Tool with no input (empty object)
-echo '{}' | ./${toolboxDir}/servers/supabase/tools/getProjectUrl.ts
-
-# Tool with input parameters
-echo '{"schemas": ["public"]}' | ./${toolboxDir}/servers/supabase/tools/listTables.ts
+echo '{}' | npx tsx ./${toolboxDir}/servers/supabase/tools/getProjectUrl.ts
+echo '{"schemas": ["public"]}' | npx tsx ./${toolboxDir}/servers/supabase/tools/listTables.ts
 \`\`\`
 
-The tool will:
-- Read JSON input from stdin (or use \`{}\` if stdin is empty)
-- Execute the MCP tool call
-- Output the result as JSON to stdout
-- Automatically handle cleanup and exit
+Output: JSON to stdout.
 
-**Note**: Ensure \`tsx\` is available in your PATH. Install with \`npm install -g tsx\` or use \`npx tsx\` if needed.
-
-#### Programmatic Usage
-
-For use in TypeScript/JavaScript code, import and call the functions directly:
+**Multi-tool workflow** → create script in \`${toolboxDir}/scripts/\`:
 
 \`\`\`typescript
-import { getProjectUrl, listTables } from '${toolboxDir}/servers/supabase/index.js';
+// ${toolboxDir}/scripts/my-workflow.ts
+import { listTables, executeSql } from "../servers/supabase/index.js";
 
-// Call a tool
-const url = await getProjectUrl({});
+async function main() {
+  const tables = await listTables({ schemas: ["public"] });
+  for (const table of tables.tables) {
+    const count = await executeSql({ sql: \\\`SELECT COUNT(*) FROM \\\${table.name}\\\` });
+    console.log(\\\`\\\${table.name}: \\\${count.rows[0].count} rows\\\`);
+  }
+}
 
-// Call with parameters
-const tables = await listTables({ schemas: ["public"] });
+main().catch(console.error);
 \`\`\`
 
-Always import specific tool functions rather than using \`callMcpTool\` directly. See \`${toolboxDir}/README.md\` for more details.`;
+Run: \`npx tsx ${toolboxDir}/scripts/my-workflow.ts\`
+
+### Decision Tree
+
+| Scenario                      | Action                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| Single tool, simple input     | \`echo '{...}' \\| npx tsx ./${toolboxDir}/servers/{server}/tools/{tool}.ts\` |
+| Multiple tools, chained logic | Create script in \`${toolboxDir}/scripts/\`                                   |
+| Reusable workflow             | Create script in \`${toolboxDir}/scripts/\`                                   |`;
 }

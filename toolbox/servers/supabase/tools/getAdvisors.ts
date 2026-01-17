@@ -14,7 +14,6 @@ export interface GetadvisorsInput {
 
 export type GetadvisorsOutput = unknown;
 
-
 /**
  * Gets a list of advisory notices for the Supabase project. Use this to check for security vulnerabilities or performance improvements. Include the remediation URL as a clickable link so that the user can reference the issue themselves. It's recommended to run this tool regularly, especially after making DDL changes to the database since it will catch things like missing RLS policies.
  *
@@ -51,7 +50,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as GetadvisorsInput;
       const result = await getAdvisors(input);
       console.log(JSON.stringify(result, null, 2));

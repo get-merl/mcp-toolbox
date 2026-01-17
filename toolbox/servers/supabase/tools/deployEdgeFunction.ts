@@ -33,7 +33,6 @@ export interface DeployedgefunctionInput {
 
 export type DeployedgefunctionOutput = unknown;
 
-
 /**
  * Deploys an Edge Function to a Supabase project. If the function already exists, this will create a new version. Example:
 
@@ -57,7 +56,9 @@ Deno.serve(async (req: Request) => {
  * @param input Tool input
  * @returns Tool output
  */
-export async function deployEdgeFunction(input: DeployedgefunctionInput): Promise<DeployedgefunctionOutput> {
+export async function deployEdgeFunction(
+  input: DeployedgefunctionInput,
+): Promise<DeployedgefunctionOutput> {
   return await callMcpTool<DeployedgefunctionOutput>({
     serverName: "supabase",
     toolName: "deploy_edge_function",
@@ -85,7 +86,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as DeployedgefunctionInput;
       const result = await deployEdgeFunction(input);
       console.log(JSON.stringify(result, null, 2));

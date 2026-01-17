@@ -14,7 +14,6 @@ export interface ListtablesInput {
 
 export type ListtablesOutput = unknown;
 
-
 /**
  * Lists all tables in one or more schemas.
  *
@@ -51,7 +50,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as ListtablesInput;
       const result = await listTables(input);
       console.log(JSON.stringify(result, null, 2));

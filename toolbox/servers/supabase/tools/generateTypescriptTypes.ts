@@ -9,7 +9,6 @@ export interface GeneratetypescripttypesInput {}
 
 export type GeneratetypescripttypesOutput = unknown;
 
-
 /**
  * Generates TypeScript types for a project.
  *
@@ -18,7 +17,9 @@ export type GeneratetypescripttypesOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function generateTypescriptTypes(input: GeneratetypescripttypesInput): Promise<GeneratetypescripttypesOutput> {
+export async function generateTypescriptTypes(
+  input: GeneratetypescripttypesInput,
+): Promise<GeneratetypescripttypesOutput> {
   return await callMcpTool<GeneratetypescripttypesOutput>({
     serverName: "supabase",
     toolName: "generate_typescript_types",
@@ -46,7 +47,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as GeneratetypescripttypesInput;
       const result = await generateTypescriptTypes(input);
       console.log(JSON.stringify(result, null, 2));

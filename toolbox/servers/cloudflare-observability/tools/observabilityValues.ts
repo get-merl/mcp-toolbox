@@ -120,7 +120,6 @@ export interface ObservabilityvaluesInput {
 
 export type ObservabilityvaluesOutput = unknown;
 
-
 /**
  * Find values in the Workers Observability Data.
 
@@ -133,7 +132,9 @@ export type ObservabilityvaluesOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function observabilityValues(input: ObservabilityvaluesInput): Promise<ObservabilityvaluesOutput> {
+export async function observabilityValues(
+  input: ObservabilityvaluesInput,
+): Promise<ObservabilityvaluesOutput> {
   return await callMcpTool<ObservabilityvaluesOutput>({
     serverName: "cloudflare-observability",
     toolName: "observability_values",
@@ -161,7 +162,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as ObservabilityvaluesInput;
       const result = await observabilityValues(input);
       console.log(JSON.stringify(result, null, 2));

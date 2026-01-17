@@ -9,6 +9,7 @@ import {
 } from "@merl-ai/mcp-toolbox-runtime";
 import { writeToolboxConfigJson } from "../lib/writeConfig.js";
 import { writeAgentInstructions } from "../lib/writeAgentInstructions.js";
+import { writeScriptsFolder } from "../lib/writeScriptsFolder.js";
 
 export function initCommand() {
   const cmd = new Command("init")
@@ -97,6 +98,13 @@ export function initCommand() {
         );
       }
 
+      // Create scripts folder in the toolbox output directory
+      const resolvedOutDirForScripts = path.isAbsolute(outDirStr)
+        ? outDirStr
+        : path.resolve(projectRoot, outDirStr);
+      await writeScriptsFolder(resolvedOutDirForScripts);
+      log.info("Created scripts folder for custom workflows");
+
       if (written) {
         const resolvedPath = path.resolve(configPath);
         outro(`Initialized config at ${resolvedPath}`);
@@ -118,6 +126,14 @@ export function initCommand() {
       outDir,
       shouldOverwriteConfig
     );
+
+    // Create scripts folder in non-interactive mode too
+    const projectRoot = path.dirname(path.resolve(configPath));
+    const resolvedOutDirForScripts = path.isAbsolute(outDir)
+      ? outDir
+      : path.resolve(projectRoot, outDir);
+    await writeScriptsFolder(resolvedOutDirForScripts);
+    log.info("Created scripts folder for custom workflows");
 
     if (written) {
       const resolvedPath = path.resolve(configPath);

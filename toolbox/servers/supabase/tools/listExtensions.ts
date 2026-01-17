@@ -9,7 +9,6 @@ export interface ListextensionsInput {}
 
 export type ListextensionsOutput = unknown;
 
-
 /**
  * Lists all extensions in the database.
  *
@@ -46,7 +45,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as ListextensionsInput;
       const result = await listExtensions(input);
       console.log(JSON.stringify(result, null, 2));

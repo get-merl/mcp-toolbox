@@ -9,7 +9,6 @@ export interface WorkerslistInput {}
 
 export type WorkerslistOutput = unknown;
 
-
 /**
  * List all Workers in your Cloudflare account.
 
@@ -20,7 +19,9 @@ If you only need details of a single Worker, use workers_get_worker.
  * @param input Tool input
  * @returns Tool output
  */
-export async function workersList(input: WorkerslistInput): Promise<WorkerslistOutput> {
+export async function workersList(
+  input: WorkerslistInput
+): Promise<WorkerslistOutput> {
   return await callMcpTool<WorkerslistOutput>({
     serverName: "cloudflare-observability",
     toolName: "workers_list",
@@ -48,13 +49,16 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as WorkerslistInput;
       const result = await workersList(input);
       console.log(JSON.stringify(result, null, 2));
       process.exit(0);
     } catch (error) {
-      console.error("Error:", error instanceof Error ? error.message : String(error));
+      console.error(
+        "Error:",
+        error instanceof Error ? error.message : String(error)
+      );
       if (error instanceof Error && error.stack) {
         console.error(error.stack);
       }

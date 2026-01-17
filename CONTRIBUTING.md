@@ -42,16 +42,23 @@ pnpm test
 packages/
 ├── mcp-toolbox/          # CLI implementation
 │   ├── src/
-│   │   ├── commands/     # CLI commands (init, add, remove, sync)
+│   │   ├── commands/     # CLI commands (init, add, remove, sync, introspect)
 │   │   ├── codegen/      # Code generation for TypeScript wrappers
 │   │   ├── diff/         # Schema diffing and reporting
 │   │   ├── introspect/   # MCP server introspection
-│   │   └── snapshot/     # Snapshot management
+│   │   ├── lib/          # Shared utilities (slug, outDir resolution, config writing)
+│   │   ├── snapshot/     # Snapshot management
+│   │   └── index.ts      # Main CLI exports
 │   └── tests/            # Test files
 └── mcp-toolbox-runtime/  # Runtime library for generated code
     └── src/
-        ├── config.ts     # Configuration schema
+        ├── auth/         # Authentication utilities (token resolution, env loading)
+        ├── registry/     # Server registry utilities
+        ├── config.ts     # Configuration schema (Zod)
+        ├── connectionPool.ts  # Connection pooling with generic-pool
+        ├── env.ts        # Environment variable handling for stdio
         ├── loadConfig.ts # Config loading with cosmiconfig
+        ├── paths.ts      # Path resolution utilities
         └── index.ts      # Main runtime exports
 ```
 
@@ -103,6 +110,7 @@ pnpm changeset
 ```
 
 This will prompt you to:
+
 1. Select which packages changed
 2. Choose the semver bump type (major/minor/patch)
 3. Write a summary of the changes

@@ -52,13 +52,7 @@ async function findWorkspaceRoot(startDir: string): Promise<string | null> {
     const turboJson = path.join(currentDir, "turbo.json");
     const rushJson = path.join(currentDir, "rush.json");
 
-    const indicators = [
-      pnpmWorkspace,
-      lernaJson,
-      nxJson,
-      turboJson,
-      rushJson,
-    ];
+    const indicators = [pnpmWorkspace, lernaJson, nxJson, turboJson, rushJson];
 
     for (const indicator of indicators) {
       if (await fileExists(indicator)) {
@@ -81,7 +75,7 @@ export async function loadToolboxConfig(
 ): Promise<ToolboxConfig> {
   // Load .env files before config validation so tokenEnv values resolve
   loadEnvFiles();
-  
+
   let result;
   if (configPath) {
     result = await explorer.load(configPath);
@@ -107,7 +101,9 @@ export async function loadToolboxConfig(
       return `- ${pathLabel}: ${issue.message}`;
     });
     throw new Error(
-      `mcp-toolbox: invalid config at ${result.filepath}:\n${issueLines.join("\n")}`
+      `mcp-toolbox: invalid config at ${result.filepath}:\n${issueLines.join(
+        "\n"
+      )}`
     );
   }
 
@@ -123,7 +119,7 @@ export async function loadToolboxConfigWithPath(
 ): Promise<{ config: ToolboxConfig; filepath: string }> {
   // Load .env files before config validation so tokenEnv values resolve
   loadEnvFiles();
-  
+
   let result;
   if (configPath) {
     result = await explorer.load(configPath);
@@ -149,7 +145,9 @@ export async function loadToolboxConfigWithPath(
       return `- ${pathLabel}: ${issue.message}`;
     });
     throw new Error(
-      `mcp-toolbox: invalid config at ${result.filepath}:\n${issueLines.join("\n")}`
+      `mcp-toolbox: invalid config at ${result.filepath}:\n${issueLines.join(
+        "\n"
+      )}`
     );
   }
 

@@ -124,7 +124,6 @@ export interface ObservabilitykeysInput {
 
 export type ObservabilitykeysOutput = unknown;
 
-
 /**
  * Find keys in the Workers Observability Data
 
@@ -142,7 +141,9 @@ export type ObservabilitykeysOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function observabilityKeys(input: ObservabilitykeysInput): Promise<ObservabilitykeysOutput> {
+export async function observabilityKeys(
+  input: ObservabilitykeysInput,
+): Promise<ObservabilitykeysOutput> {
   return await callMcpTool<ObservabilitykeysOutput>({
     serverName: "cloudflare-observability",
     toolName: "observability_keys",
@@ -170,7 +171,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as ObservabilitykeysInput;
       const result = await observabilityKeys(input);
       console.log(JSON.stringify(result, null, 2));

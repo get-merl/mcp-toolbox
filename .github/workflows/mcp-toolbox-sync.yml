@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -44,6 +47,7 @@ jobs:
         if: github.token != ''
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore(toolbox): sync generated MCP wrappers"
           title: "chore(toolbox): sync generated MCP wrappers"
           body: |

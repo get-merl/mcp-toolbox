@@ -45,6 +45,21 @@ export async function runCli(argv: string[]) {
   try {
     await program.parseAsync(argv);
   } catch (error: unknown) {
+    // Commander throws an error with a 'code' property for controlled exits (help, version, etc.)
+    // Check if this is a help/version request, which should exit with code 0
+    const isHelpOrVersion =
+      argv.includes("--help") ||
+      argv.includes("-h") ||
+      argv.includes("--version") ||
+      argv.includes("-V") ||
+      (error && typeof error === "object" && "code" in error && (error.code === "commander.help" || error.code === "commander.version"));
+
+    if (isHelpOrVersion) {
+      // Help and version are successful operations
+      process.exitCode = 0;
+      return;
+    }
+
     // Ensure error message is a string before any operations
     let errorMessage: string;
     if (error instanceof Error) {

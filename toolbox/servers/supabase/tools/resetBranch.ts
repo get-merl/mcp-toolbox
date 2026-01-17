@@ -15,7 +15,6 @@ export interface ResetbranchInput {
 
 export type ResetbranchOutput = unknown;
 
-
 /**
  * Resets migrations of a development branch. Any untracked data or schema changes will be lost.
  *
@@ -52,7 +51,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as ResetbranchInput;
       const result = await resetBranch(input);
       console.log(JSON.stringify(result, null, 2));

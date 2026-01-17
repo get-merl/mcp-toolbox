@@ -14,7 +14,6 @@ export interface GetlogsInput {
 
 export type GetlogsOutput = unknown;
 
-
 /**
  * Gets logs for a Supabase project by service type. Use this to help debug problems with your app. This will return logs within the last 24 hours.
  *
@@ -51,7 +50,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as GetlogsInput;
       const result = await getLogs(input);
       console.log(JSON.stringify(result, null, 2));

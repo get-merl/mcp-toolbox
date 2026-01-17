@@ -14,7 +14,6 @@ export interface WorkersgetworkerInput {
 
 export type WorkersgetworkerOutput = unknown;
 
-
 /**
  * Get the details of the Cloudflare Worker.
  *
@@ -23,7 +22,9 @@ export type WorkersgetworkerOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function workersGetWorker(input: WorkersgetworkerInput): Promise<WorkersgetworkerOutput> {
+export async function workersGetWorker(
+  input: WorkersgetworkerInput,
+): Promise<WorkersgetworkerOutput> {
   return await callMcpTool<WorkersgetworkerOutput>({
     serverName: "cloudflare-observability",
     toolName: "workers_get_worker",
@@ -51,7 +52,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as WorkersgetworkerInput;
       const result = await workersGetWorker(input);
       console.log(JSON.stringify(result, null, 2));

@@ -11,7 +11,6 @@ export interface DeletebranchInput {
 
 export type DeletebranchOutput = unknown;
 
-
 /**
  * Deletes a development branch.
  *
@@ -48,7 +47,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as DeletebranchInput;
       const result = await deleteBranch(input);
       console.log(JSON.stringify(result, null, 2));

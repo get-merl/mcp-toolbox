@@ -14,7 +14,6 @@ export interface SetactiveaccountInput {
 
 export type SetactiveaccountOutput = unknown;
 
-
 /**
  * Set active account to be used for tool calls that require accountId
  *
@@ -23,7 +22,9 @@ export type SetactiveaccountOutput = unknown;
  * @param input Tool input
  * @returns Tool output
  */
-export async function setActiveAccount(input: SetactiveaccountInput): Promise<SetactiveaccountOutput> {
+export async function setActiveAccount(
+  input: SetactiveaccountInput,
+): Promise<SetactiveaccountOutput> {
   return await callMcpTool<SetactiveaccountOutput>({
     serverName: "cloudflare-observability",
     toolName: "set_active_account",
@@ -51,7 +52,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as SetactiveaccountInput;
       const result = await setActiveAccount(input);
       console.log(JSON.stringify(result, null, 2));

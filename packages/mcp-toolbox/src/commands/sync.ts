@@ -25,6 +25,7 @@ import { renderDiffReport } from "../diff/report.js";
 import { generateServerTs } from "../codegen/ts/generateServer.js";
 import { writeCatalog } from "../codegen/catalog.js";
 import { writeToolboxReadme } from "../codegen/readme.js";
+import { writeScriptsFolder } from "../lib/writeScriptsFolder.js";
 import type { IntrospectedServer } from "../introspect/types.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -109,6 +110,7 @@ async function finalizeSyncOutput(args: {
 }): Promise<void> {
   await writeCatalog({ outDir: args.outDir, entries: args.catalogEntries });
   await writeToolboxReadme(args.outDir);
+  await writeScriptsFolder(args.outDir);
 
   if (args.shouldFormat) {
     await tryFormatWithOxfmt(args.outDir);

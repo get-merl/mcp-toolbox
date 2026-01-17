@@ -14,7 +14,6 @@ export interface SearchdocsInput {
 
 export type SearchdocsOutput = unknown;
 
-
 /**
  * Search the Supabase documentation using GraphQL. Must be a valid GraphQL query.
 You should default to calling this even if you think you already know the answer, since the documentation is always being updated.
@@ -56,7 +55,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
           inputStr = "{}";
         }
       }
-      
+
       const input = JSON.parse(inputStr) as SearchdocsInput;
       const result = await searchDocs(input);
       console.log(JSON.stringify(result, null, 2));
