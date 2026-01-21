@@ -11,8 +11,9 @@ const packageDir = dirname(distDir); // packages/mcp-toolbox-benchmark
 const packagesDir = dirname(packageDir); // packages/
 const repoRoot = dirname(packagesDir); // repo root
 
-// Load .env file from repo root
+// Load .env files from repo root (.env.local overrides .env)
 config({ path: resolve(repoRoot, '.env') });
+config({ path: resolve(repoRoot, '.env.local'), override: true });
 
 import { createCLI } from './cli.js';
 

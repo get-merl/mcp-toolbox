@@ -5,7 +5,7 @@
     "prompt": "Get the Supabase project API URL. Return only the JSON tool call.",
     "toolNames": ["getProjectUrl"],
     "expectedToolCall": {
-      "tool_name": "supabase.getProjectUrl",
+      "tool_name": "supabase.get_project_api_url",
       "arguments": {}
     }
   },
@@ -15,9 +15,9 @@
     "prompt": "List tables in the public schema. Return only the JSON tool call.",
     "toolNames": ["listTables"],
     "expectedToolCall": {
-      "tool_name": "supabase.listTables",
+      "tool_name": "sql_query",
       "arguments": {
-        "schemas": ["public"]
+        "query": "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public' ORDER BY tablename;"
       }
     }
   },
@@ -27,9 +27,9 @@
     "prompt": "Search Cloudflare docs for \"Workers Durable Objects alarms\". Return only the JSON tool call.",
     "toolNames": ["searchCloudflareDocumentation"],
     "expectedToolCall": {
-      "tool_name": "cloudflare-observability.searchCloudflareDocumentation",
+      "tool_name": "browser.search",
       "arguments": {
-        "query": "Workers Durable Objects alarms"
+        "query": "Cloudflare docs Workers Durable Objects alarms"
       }
     }
   }
